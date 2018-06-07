@@ -1,0 +1,11 @@
+{
+    "name": "neo/new-yii.loc",
+    "authors": [
+        {
+            "name": "Neo",
+            "email": "shlykovn@mail.ru"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {}
+}
