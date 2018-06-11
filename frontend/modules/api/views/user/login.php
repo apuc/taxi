@@ -11,7 +11,7 @@ use yii\helpers\Html;
 <p>Login</p>
 <?= Html::input('text', 'login', Yii::$app->request->post('login'), ['class' => 'form-control']) ?>
 <p>Password</p>
-<?= Html::input('text', 'pass', Yii::$app->request->post('pass'), ['class' => 'form-control']) ?>
+<?= Html::input('password', 'pass', Yii::$app->request->post('pass'), ['class' => 'form-control']) ?>
 <p>
 	<?= Html::submitButton('Send', ['class' => 'btn btn-lg btn-primary', 'name' => 'hash-button']) ?>
 </p>
