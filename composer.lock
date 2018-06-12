@@ -1,7 +1,7 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
     "content-hash": "a4ab8564f6dc5e63a9d7a77bd02a28d9",
@@ -281,7 +281,7 @@
             "version": "v1.3.2",
             "source": {
                 "type": "git",
-                "url": "https://github.com/bestiejs/punycode.js.git",
+                "url": "git@github.com:bestiejs/punycode.js.git",
                 "reference": "38c8d3131a82567bfef18da09f7f4db68c84f8a3"
             },
             "dist": {
