@@ -34,7 +34,7 @@ class MotorTransport extends ActiveRecord
     public function rules()
     {
         return [
-            [['user_id', 'brand', 'model', 'year', 'dt_add'], 'required'],
+            [['user_id', 'brand', 'model', 'year'], 'required'],
             [['user_id', 'year', 'status', 'dt_add'], 'integer'],
             [['brand', 'model', 'photo'], 'string', 'max' => 254],
         ];

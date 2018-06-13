@@ -18,26 +18,20 @@ use yii\widgets\ActiveForm;
 
 class MotorTransportController extends DefaultController {
 
-    public function actionIndex() {
-//        $user = (\Yii::$app->user->identity) ? \Yii::$app->user->identity->getId() : null;
-//        $token = Token::findOne(["user_id" => $user]);
-//
-//        $model = new ApiMotorTransport();
-//
-//        return $this->render('index', compact("token", "model"));
-        //var_dump($_POST);
-        echo '123';
-    }
-
-
     public function actionAdd(){
+        $apiMotor["ApiMotorTransport"] = Yii::$app->request->post();
+
         $model = new ApiMotorTransport();
 
-        if (!$model->saveMotor()) {
-            return ActiveForm::validate($model);
+        $model->load($apiMotor);
+        $model->status = Constants::STATUS_ENABLED;
+        $model->dt_add = time();
+
+        if ( ! $model->save() ) {
+            return ActiveForm::validate( $model );
         }
 
-        return "добавлен пользователь";
+        return "Успешно добавлен";
     }
 
     public function actionDel(){
