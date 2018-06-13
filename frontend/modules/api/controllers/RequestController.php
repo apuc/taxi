@@ -35,7 +35,7 @@ class RequestController extends DefaultController {
 		//тестовые данные
 		$modelAdd->user_id = Yii::$app->user->getId();
 		$modelAdd->car_id  = 1;
-		$modelAdd->dt_add  = time();
+//		$modelAdd->dt_add  = time();
 
 
 		$modelDelete->id = 4;
@@ -50,9 +50,15 @@ class RequestController extends DefaultController {
 		return $this->render( 'index', compact( "token", "modelAdd", "modelDelete", "modelEdit", "modelGetLists" ) );
 	}
 
+
 	public function actionAdd() {
+		$apiRequest["ApiRequest"] = Yii::$app->request->post();
+
 		$model = new ApiRequest();
-		$model->load( Yii::$app->request->post() );
+
+		$model->load( $apiRequest );
+		$model->dt_add = time();
+
 		if ( ! $model->save() ) {
 			return ActiveForm::validate( $model );
 		}
@@ -72,8 +78,7 @@ class RequestController extends DefaultController {
 	 * @throws \yii\db\StaleObjectException
 	 */
 	public function actionDelete() {
-
-		$id    = Yii::$app->request->post()["ApiRequest"]["id"];
+		$id    = Yii::$app->request->post()["id"];
 		$model = ApiRequest::findOne( $id );
 		if ( ! is_null( $model ) ) {
 			$model->delete();
@@ -90,7 +95,7 @@ class RequestController extends DefaultController {
 	}
 
 	public function actionEdit() {
-		$id    = Yii::$app->request->post()["ApiRequest"]["id"];
+		$id    = Yii::$app->request->post()["id"];
 		$model = ApiRequest::findOne( $id );
 
 		if ( is_null( $model ) ) {
@@ -107,7 +112,11 @@ class RequestController extends DefaultController {
 
 	public function actionGetLists() {
 		$modelPost = new ApiRequest();
-		$modelPost->load( Yii::$app->request->post() );
+
+		$apiRequest["ApiRequest"] = Yii::$app->request->post();
+
+
+		$modelPost->load( $apiRequest );
 		$models = ApiRequest::find()->where( [ "user_id" => $modelPost->user_id ] )->limit( $modelPost->limit )->offset( $modelPost->offset )->asArray()->all();
 
 		return $models;
