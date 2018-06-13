@@ -8,6 +8,7 @@
 
 namespace frontend\modules\api\controllers;
 
+use common\helpers\Constants;
 use common\models\Token;
 use frontend\modules\api\models\ApiMotorTransport;
 use Yii;
