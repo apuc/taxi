@@ -21,21 +21,8 @@ class DefaultController extends Controller {
 	 * @throws NotFoundHttpException
 	 */
 	public function beforeAction( $action ) {
-
-		if ( $action->id == "index" ) {
-			return parent::beforeAction( $action );
-		}
-
-		if ( \Yii::$app->user->isGuest ) {
-			$this->redirect( Yii::$app->getHomeUrl() );
-
-			return false;
-		}
-
-
-		if ( \Yii::$app->request->isPost === parent::beforeAction( $action ) ) {
-
-			if ($this->isToken()) {
+		if ( \Yii::$app->request->isPost ) {
+			if ( $this->isToken() ) {
 				\Yii::$app->response->format = Response::FORMAT_JSON;
 				$this->layout                = false;
 
@@ -59,7 +46,16 @@ class DefaultController extends Controller {
 		return $this->render( 'index' );
 	}
 
+	/**
+	 * проверка токена
+	 * @return bool|null|static
+	 */
 	private function isToken() {
-		return Token::findOne( [ "user_id" => Yii::$app->user->getId() ] )->token == Yii::$app->request->post()["token"];
+		if (isset(Yii::$app->request->post()["token"])){
+			return Token::findOne( [ "token" => Yii::$app->request->post()["token"] ] );
+		}
+
+		return false;
+
 	}
 }
