@@ -58,6 +58,6 @@ class ApiMotorTransport extends Model {
     }
 
     public function getLists() {
-        return MotorTransport::find()->where(['user_id'=>1])->asArray()->one();
+        return MotorTransport::find()->where(['user_id'=>$this->user_id])->asArray()->one();
     }
 }
