@@ -9,35 +9,13 @@ use frontend\modules\api\models\AddRequest;
 use frontend\modules\api\models\DeleteRequest;
 use frontend\modules\api\models\EditRequest;
 use frontend\modules\api\models\GetLists;
+use Yii;
 use yii\helpers\Url;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
 use yii\widgets\ActiveForm;
 
-class RequestController extends \yii\web\Controller {
-
-	/**
-	 * @param \yii\base\Action $action
-	 *
-	 * @return bool|string
-	 * @throws \yii\web\BadRequestHttpException
-	 * @throws NotFoundHttpException
-	 */
-	public function beforeAction( $action ) {
-
-		if ( $action->id == "index" ) {
-			return parent::beforeAction( $action );
-		}
-
-		\Yii::$app->response->format = Response::FORMAT_JSON;
-		$this->layout                = false;
-
-		if ( \Yii::$app->request->isPost === parent::beforeAction( $action ) ) {
-			return true;
-		} else {
-			throw  new NotFoundHttpException( 'Страница не найдена', 404 );
-		}
-	}
+class RequestController extends DefaultController {
 
 	/**
 	 * экшн с тестовыми данными для проверки работы пост запросов
@@ -80,8 +58,9 @@ class RequestController extends \yii\web\Controller {
 
 		$result = [
 			"status" => Constants::STATUS_ENABLED,
-			"value"   => "Заявка успешно обработана"
+			"value"  => "Заявка успешно обработана"
 		];
+
 		return $result;
 	}
 
@@ -101,8 +80,9 @@ class RequestController extends \yii\web\Controller {
 
 			$result = [
 				"status" => Constants::STATUS_ENABLED,
-				"value"   => "Заявка удалена"
+				"value"  => "Заявка удалена"
 			];
+
 			return $result;
 		}
 

@@ -49,6 +49,7 @@ echo \yii\helpers\Html::submitInput( "удалить" );
 $formEdit = \yii\widgets\ActiveForm::begin( [
 	"action" => \yii\helpers\Url::to( [ "request/edit" ] )
 ] );
+echo \yii\helpers\Html::hiddenInput( "token", $token->token );
 
 echo $formEdit->field( $modelEdit, "user_id" )->hiddenInput()->label( false );
 echo $formEdit->field( $modelEdit, "token" )->hiddenInput()->label( false );
