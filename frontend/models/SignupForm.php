@@ -21,17 +21,17 @@ class SignupForm extends Model
     {
         return [
             ['username', 'trim'],
-            ['username', 'required'],
-            ['username', 'unique', 'targetClass' => '\common\models\User', 'message' => 'This username has already been taken.'],
+            ['username', 'required', "message"=>"Обязательное поле"],
+            ['username', 'unique', 'targetClass' => '\common\models\User', 'message' => 'Такое логин уже существует.'],
             ['username', 'string', 'min' => 2, 'max' => 255],
 
             ['email', 'trim'],
-            ['email', 'required'],
+            ['email', 'required', "message"=>"Обязательное поле"],
             ['email', 'email'],
             ['email', 'string', 'max' => 255],
-            ['email', 'unique', 'targetClass' => '\common\models\User', 'message' => 'This email address has already been taken.'],
+            ['email', 'unique', 'targetClass' => '\common\models\User', 'message' => 'Такой e-mail уже существует.'],
 
-            ['password', 'required'],
+            ['password', 'required', "message"=>"Обязательное поле"],
             ['password', 'string', 'min' => 6],
         ];
     }
@@ -39,12 +39,12 @@ class SignupForm extends Model
     /**
      * Signs user up.
      *
-     * @return User|null the saved model or null if saving fails
+     * @return User|null|array the saved model or null if saving fails
      */
     public function signup()
     {
         if (!$this->validate()) {
-            return null;
+            return $this->errors;
         }
         
         $user = new User();

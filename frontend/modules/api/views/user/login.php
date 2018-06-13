@@ -7,12 +7,15 @@ use yii\helpers\Html;
 ?>
 <h1>Login</h1>
 
-<?= Html::beginForm(['login'], 'post', ['data-pjax' => '', 'class' => 'form-inline']); ?>
-<p>Login</p>
-<?= Html::input('text', 'login', Yii::$app->request->post('login'), ['class' => 'form-control']) ?>
-<p>Password</p>
-<?= Html::input('password', 'pass', Yii::$app->request->post('pass'), ['class' => 'form-control']) ?>
-<p>
-	<?= Html::submitButton('Send', ['class' => 'btn btn-lg btn-primary', 'name' => 'hash-button']) ?>
-</p>
+<?php $form = ActiveForm::begin(['id' => 'login-form']); ?>
+
+<?= $form->field($model, 'username')->textInput(['autofocus' => true]) ?>
+
+<?= $form->field($model, 'password')->passwordInput() ?>
+
+<div class="form-group">
+	<?= Html::submitButton('Login', ['class' => 'btn btn-primary', 'name' => 'login-button']) ?>
+</div>
+
+<?php ActiveForm::end(); ?>
 
