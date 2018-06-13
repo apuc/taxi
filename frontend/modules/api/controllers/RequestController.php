@@ -6,6 +6,7 @@ use common\helpers\Constants;
 use common\models\Request;
 use common\models\Token;
 use frontend\modules\api\models\AddRequest;
+use frontend\modules\api\models\ApiRequest;
 use frontend\modules\api\models\DeleteRequest;
 use frontend\modules\api\models\EditRequest;
 use frontend\modules\api\models\GetLists;
@@ -26,32 +27,32 @@ class RequestController extends DefaultController {
 		$token = Token::findOne( [ "user_id" => $user ] );
 
 
-		$modelAdd      = new AddRequest();
-		$modelDelete   = new DeleteRequest();
-		$modelEdit     = new EditRequest();
-		$modelGetLists = new GetLists();
+		$modelAdd      = new ApiRequest();
+		$modelDelete   = new ApiRequest();
+		$modelEdit     = new ApiRequest();
+		$modelGetLists = new ApiRequest();
 
 		//тестовые данные
-		$modelDelete->user_id    = $user;
-		$modelDelete->token      = ( $token ) ? $token->token : null;
-		$modelDelete->request_id = 1;
+		$modelAdd->user_id = Yii::$app->user->getId();
+		$modelAdd->car_id  = 1;
+		$modelAdd->dt_add  = time();
 
-		$modelEdit->user_id    = $user;
-		$modelEdit->token      = ( $token ) ? $token->token : null;
-		$modelEdit->request_id = 2;
 
-		$modelGetLists->token   = ( $token ) ? $token->token : null;
+		$modelDelete->id = 4;
+
+		$modelEdit->id = 8;
+//
+//		$modelGetLists->token   = ( $token ) ? $token->token : null;
 		$modelGetLists->user_id = $user;
-//		$modelGetLists->offset = 2;
-//		$modelGetLists->limit = 2;
+		$modelGetLists->limit   = 3;
+		$modelGetLists->offset  = 1;
 
 		return $this->render( 'index', compact( "token", "modelAdd", "modelDelete", "modelEdit", "modelGetLists" ) );
 	}
 
 	public function actionAdd() {
-		$model = new AddRequest();
-		$model->load( \Yii::$app->request->post() );
-
+		$model = new ApiRequest();
+		$model->load( Yii::$app->request->post() );
 		if ( ! $model->save() ) {
 			return ActiveForm::validate( $model );
 		}
@@ -72,44 +73,44 @@ class RequestController extends DefaultController {
 	 */
 	public function actionDelete() {
 
-		$model = new DeleteRequest();
-		$model->load( \Yii::$app->request->post() );
+		$id    = Yii::$app->request->post()["ApiRequest"]["id"];
+		$model = ApiRequest::findOne( $id );
+		if ( ! is_null( $model ) ) {
+			$model->delete();
+		}
 
-		if ( $model->validate() ) {
-			$model->deleteRequest();
+		$result = [
+			"status" => Constants::STATUS_ENABLED,
+			"value"  => "Заявка удалена"
+		];
 
+		return $result;
+
+
+	}
+
+	public function actionEdit() {
+		$id    = Yii::$app->request->post()["ApiRequest"]["id"];
+		$model = ApiRequest::findOne( $id );
+
+		if ( is_null( $model ) ) {
 			$result = [
-				"status" => Constants::STATUS_ENABLED,
-				"value"  => "Заявка удалена"
+				"status" => Constants::STATUS_DISABLED,
+				"value"  => "Заявка не найдена"
 			];
 
 			return $result;
 		}
 
-		return ActiveForm::validate( $model );
-
-	}
-
-	public function actionEdit() {
-		$model = new EditRequest();
-		$model->load( \Yii::$app->request->post() );
-
-		if ( $model->validate() ) {
-			return $model->getRequest();
-		}
-
-		return ActiveForm::validate( $model );
+		return $model->toArray();
 	}
 
 	public function actionGetLists() {
-		$model = new GetLists();
-		$model->load( \Yii::$app->request->post() );
+		$modelPost = new ApiRequest();
+		$modelPost->load( Yii::$app->request->post() );
+		$models = ApiRequest::find()->where( [ "user_id" => $modelPost->user_id ] )->limit( $modelPost->limit )->offset( $modelPost->offset )->asArray()->all();
 
-		if ( $model->validate() ) {
-			return $model->getLists();
-		}
-
-		return ActiveForm::validate( $model );
+		return $models;
 
 	}
 

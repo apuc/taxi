@@ -5,10 +5,10 @@
  * Date: 11.06.2018
  * Time: 13:37
  *
- * @var $modelAdd frontend\modules\api\models\AddRequest
- * @var $modelDelete frontend\modules\api\models\DeleteRequest
- * @var $modelEdit frontend\modules\api\models\EditRequest
- * @var $modelGetLists frontend\modules\api\models\GetLists
+ * @var $modelAdd frontend\modules\api\models\ApiRequest
+ * @var $modelDelete frontend\modules\api\models\ApiRequest
+ * @var $modelEdit frontend\modules\api\models\ApiRequest
+ * @var $modelGetLists frontend\modules\api\models\ApiRequest
  * @var $token common\models\Token
  *
  *
@@ -18,17 +18,20 @@
 ?>
 
 <?php
-
-$modelAdd->token = ( $token ) ? $token->token : null;
-
+//$modelAdd->token = ( $token ) ? $token->token : null;
+//var_dump($modelAdd);die;
 
 $formAdd = \yii\widgets\ActiveForm::begin( [
 	"action" => \yii\helpers\Url::to( [ "request/add" ] )
 ] );
 
-echo $formAdd->field( $modelAdd, "token" )->hiddenInput()->label( false );
+echo \yii\helpers\Html::hiddenInput( "token", $token->token );
 
-echo \yii\helpers\Html::submitInput( "отправить" );
+echo $formAdd->field( $modelAdd, "user_id" )->hiddenInput()->label( false );
+echo $formAdd->field( $modelAdd, "car_id" )->hiddenInput()->label( false );
+echo $formAdd->field( $modelAdd, "dt_add" )->hiddenInput()->label( false );
+
+echo \yii\helpers\Html::submitInput( "Отправить" );
 
 
 \yii\widgets\ActiveForm::end();
@@ -37,12 +40,9 @@ echo \yii\helpers\Html::submitInput( "отправить" );
 $formDelete = \yii\widgets\ActiveForm::begin( [
 	"action" => \yii\helpers\Url::to( [ "request/delete" ] )
 ] );
-
-echo $formDelete->field( $modelDelete, "user_id" )->hiddenInput()->label( false );
-echo $formDelete->field( $modelDelete, "token" )->hiddenInput()->label( false );
-echo $formDelete->field( $modelDelete, "request_id" )->hiddenInput()->label( false );
-
-echo \yii\helpers\Html::submitInput( "удалить" );
+echo \yii\helpers\Html::hiddenInput( "token", $token->token );
+echo $formDelete->field( $modelDelete, "id" )->hiddenInput()->label( false );
+echo \yii\helpers\Html::submitInput( "Удалить" );
 \yii\widgets\ActiveForm::end();
 
 
@@ -50,11 +50,7 @@ $formEdit = \yii\widgets\ActiveForm::begin( [
 	"action" => \yii\helpers\Url::to( [ "request/edit" ] )
 ] );
 echo \yii\helpers\Html::hiddenInput( "token", $token->token );
-
-echo $formEdit->field( $modelEdit, "user_id" )->hiddenInput()->label( false );
-echo $formEdit->field( $modelEdit, "token" )->hiddenInput()->label( false );
-echo $formEdit->field( $modelEdit, "request_id" )->hiddenInput()->label( false );
-
+echo $formEdit->field( $modelEdit, "id" )->hiddenInput()->label( false );
 echo \yii\helpers\Html::submitInput( "Редактировать" );
 \yii\widgets\ActiveForm::end();
 
@@ -62,11 +58,14 @@ echo \yii\helpers\Html::submitInput( "Редактировать" );
 $formGetLists = \yii\widgets\ActiveForm::begin( [
 	"action" => \yii\helpers\Url::to( [ "request/get-lists" ] )
 ] );
+echo \yii\helpers\Html::hiddenInput( "token", $token->token );
 echo $formGetLists->field( $modelGetLists, "user_id" )->hiddenInput()->label( false );
-echo $formGetLists->field( $modelGetLists, "token" )->hiddenInput()->label( false );
-echo $formGetLists->field( $modelGetLists, "offset" )->hiddenInput()->label( false );
 echo $formGetLists->field( $modelGetLists, "limit" )->hiddenInput()->label( false );
-
-echo \yii\helpers\Html::submitInput( "Получить список" );
+echo $formGetLists->field( $modelGetLists, "offset" )->hiddenInput()->label( false );
+echo \yii\helpers\Html::submitInput( "Получить все объекты" );
 \yii\widgets\ActiveForm::end();
+
+
 ?>
+
+
