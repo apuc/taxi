@@ -10,6 +10,7 @@ namespace frontend\modules\api\controllers;
 
 use common\models\Token;
 use frontend\modules\api\models\ApiMotorTransport;
+use Yii;
 use yii\base\Controller;
 use yii\helpers\Url;
 use yii\web\NotFoundHttpException;
@@ -19,9 +20,9 @@ use yii\widgets\ActiveForm;
 class MotorTransportController extends DefaultController {
 
     public function actionAdd(){
-        $apiMotor["ApiMotorTransport"] = Yii::$app->request->post();
-
         $model = new ApiMotorTransport();
+
+        $apiMotor["ApiMotorTransport"] = Yii::$app->request->post();
 
         $model->load($apiMotor);
         $model->status = Constants::STATUS_ENABLED;
@@ -35,17 +36,32 @@ class MotorTransportController extends DefaultController {
     }
 
     public function actionDel(){
-        $model = new ApiMotorTransport();
-
-        $model->deleteMotor();
+        $id = Yii::$app->request->post()["id"];
+        ApiMotorTransport::deleteAll($id);
 
         return "Заявка удалена";
     }
 
-    public function actionGetLists() {
-        $model = new ApiMotorTransport();
+    public function actionEdit() {
+        $id = Yii::$app->request->post()["id"];
+        $model = ApiMotorTransport::findOne($id);
 
-        return $model->getLists();
+        if (is_null($model)) {
+            return "None";
+        }
+
+        return $model->toArray();
+    }
+
+    public function actionGetLists() {
+        $modelPost = new ApiMotorTransport();
+
+        $apiMotor["ApiMotorTransport"] = Yii::$app->request->post();
+
+        $modelPost->load($apiMotor);
+        $models = ApiMotorTransport::find()->where(['user_id'=>$modelPost->user_id])->asArray()->one();
+
+        return $models;
     }
 
 }

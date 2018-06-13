@@ -22,16 +22,4 @@ class ApiMotorTransport extends MotorTransport {
 
         return $rules;
     }
-
-    public function deleteMotor() {
-        MotorTransport::deleteAll($this->user_id);
-    }
-
-    public function getMotor() {
-        return MotorTransport::findOne($this->user_id)->toArray();
-    }
-
-    public function getLists() {
-        return MotorTransport::find()->where(['user_id'=>$this->user_id])->asArray()->one();
-    }
 }
