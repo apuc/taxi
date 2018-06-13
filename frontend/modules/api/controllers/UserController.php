@@ -14,6 +14,14 @@ class UserController extends Controller {
 	public $status = 0;
 	public $error_msg;
 
+
+	public function beforeAction( $action ) {
+		$this->enableCsrfValidation = false;
+
+		return parent::beforeAction( $action );
+	}
+
+
 	public function actionIndex() {
 		return $this->render( 'index' );
 	}
@@ -22,7 +30,9 @@ class UserController extends Controller {
 		$model = new SignupForm();
 
 		if ( Yii::$app->request->isPost ) {
-			$model->load( Yii::$app->request->post() );
+
+			$data["SignupForm"] = Yii::$app->request->post();
+			$model->load( $data );
 			\Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
 
 			$user = $model->signup();
@@ -45,14 +55,13 @@ class UserController extends Controller {
 	}
 
 	public function actionLogin() {
-		if ( ! Yii::$app->user->isGuest ) {
-			return $this->goHome();
-		}
+
 		$model = new LoginForm();
 
 
 		if ( Yii::$app->request->isPost ) {
-			$model->load( Yii::$app->request->post() );
+			$data["LoginForm"] = Yii::$app->request->post();
+			$model->load( $data );
 			\Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
 
 			if ( $model->login() ) {

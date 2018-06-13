@@ -6,6 +6,6 @@
  * Time: 15:12
  */
 
-class City {
+class City extends \common\models\City {
 
 }
