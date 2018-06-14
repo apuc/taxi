@@ -20,12 +20,24 @@ use yii\widgets\ActiveForm;
 
 class MotorTransportController extends DefaultController {
 
+    private function SaveImg($val){
+        define('UPLOAD_DIR', 'images/');
+        $img = $val;
+        $img = str_replace('data:image/png;base64,', '', $img);
+        $img = str_replace(' ', '+', $img);
+        $data = base64_decode($img);
+        $file = UPLOAD_DIR . uniqid() . '.png';
+        $success = file_put_contents($file, $data);
+    }
+
+
     public function actionAdd(){
         $model = new ApiMotorTransport();
 
         $apiMotor["ApiMotorTransport"] = Yii::$app->request->post();
 
         $model->load($apiMotor);
+        $this->SaveImg($model->photo);
         $model->status = Constants::STATUS_ENABLED;
         $model->dt_add = time();
 
