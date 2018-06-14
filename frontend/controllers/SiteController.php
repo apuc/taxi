@@ -210,4 +210,13 @@ class SiteController extends Controller
             'model' => $model,
         ]);
     }
+
+    public function actionCreateFolder() {
+        $dir = '/media/upload/' . Yii::$app->user->id . '/' . date('Y-m-d') . '/';
+        $path = Yii::getAlias('@frontend/web' . $dir);
+        $folderThumb = new Folder($path . 'thumb/', 0775);
+        $folderThumb->create();
+
+        return 'ok';
+    }
 }

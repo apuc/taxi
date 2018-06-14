@@ -8,6 +8,7 @@
 
 namespace frontend\modules\api\controllers;
 
+use common\classes\Folder;
 use common\helpers\Constants;
 use common\models\Token;
 use frontend\modules\api\models\ApiMotorTransport;
@@ -20,7 +21,7 @@ use yii\widgets\ActiveForm;
 
 class MotorTransportController extends DefaultController {
 
-    private function SaveImg($val){
+    private function SaveImg($val) {
         define('UPLOAD_DIR', 'images/');
         $img = $val;
         $img = str_replace('data:image/png;base64,', '', $img);
@@ -31,7 +32,7 @@ class MotorTransportController extends DefaultController {
     }
 
 
-    public function actionAdd(){
+    public function actionAdd() {
         $model = new ApiMotorTransport();
 
         $apiMotor["ApiMotorTransport"] = Yii::$app->request->post();
@@ -41,14 +42,14 @@ class MotorTransportController extends DefaultController {
         $model->status = Constants::STATUS_ENABLED;
         $model->dt_add = time();
 
-        if ( ! $model->save() ) {
-            return ActiveForm::validate( $model );
+        if (!$model->save()) {
+            return ActiveForm::validate($model);
         }
 
         return "Успешно добавлен";
     }
 
-    public function actionDel(){
+    public function actionDel() {
         $id = Yii::$app->request->post()["id"];
         ApiMotorTransport::deleteAll($id);
 
@@ -72,9 +73,11 @@ class MotorTransportController extends DefaultController {
         $apiMotor["ApiMotorTransport"] = Yii::$app->request->post();
 
         $modelPost->load($apiMotor);
-        $models = ApiMotorTransport::find()->where(['user_id'=>$modelPost->user_id])->asArray()->one();
+        $models = ApiMotorTransport::find()->where(['user_id' => $modelPost->user_id])->asArray()->one();
 
         return $models;
     }
+
+
 
 }
