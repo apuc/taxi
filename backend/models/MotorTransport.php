@@ -2,6 +2,7 @@
 
 namespace backend\models;
 
+use common\models\User;
 use Yii;
 
 /**
@@ -45,13 +46,19 @@ class MotorTransport extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'user_id' => 'User ID',
-            'brand' => 'Brand',
-            'model' => 'Model',
-            'year' => 'Year',
-            'photo' => 'Photo',
-            'status' => 'Status',
-            'dt_add' => 'Dt Add',
+            'user_id' => 'ID пользователя',
+            'user.username' => 'Имя пользователя',
+            'brand' => 'Бренд',
+            'model' => 'Модель',
+            'year' => 'Год',
+            'photo' => 'фото',
+            'status' => 'Статус',
+            'dt_add' => 'Дата добавления',
         ];
     }
+
+    public function getUser(){
+        return $this->hasOne(User::className(), ['id' => 'user_id']);
+    }
+
 }

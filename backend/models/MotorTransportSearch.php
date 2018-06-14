@@ -3,6 +3,7 @@
 namespace backend\models;
 
 use backend\models\MotorTransport;
+use common\models\User;
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
@@ -42,8 +43,9 @@ class MotorTransportSearch extends MotorTransport
      */
     public function search($params)
     {
-        $query = MotorTransport::find();
+        $query = MotorTransport::find()->with('user');
 
+        //$query->joinWith(['user']);
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
@@ -51,6 +53,7 @@ class MotorTransportSearch extends MotorTransport
         ]);
 
         $this->load($params);
+//        var_dump(Yii::$app->request->get());die;
 
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
