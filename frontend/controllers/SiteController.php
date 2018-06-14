@@ -1,6 +1,7 @@
 <?php
 namespace frontend\controllers;
 
+use common\helpers\Folder;
 use Yii;
 use yii\base\InvalidParamException;
 use yii\web\BadRequestHttpException;
@@ -214,7 +215,7 @@ class SiteController extends Controller
     public function actionCreateFolder() {
         $dir = '/media/upload/' . Yii::$app->user->id . '/' . date('Y-m-d') . '/';
         $path = Yii::getAlias('@frontend/web' . $dir);
-        $folderThumb = new Folder($path . 'thumb/', 0775);
+        $folderThumb = new Folder($path , 0775);
         $folderThumb->create();
 
         return 'ok';

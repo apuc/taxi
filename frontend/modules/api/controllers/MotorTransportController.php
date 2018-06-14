@@ -8,7 +8,6 @@
 
 namespace frontend\modules\api\controllers;
 
-use common\classes\Folder;
 use common\helpers\Constants;
 use common\models\Token;
 use frontend\modules\api\models\ApiMotorTransport;

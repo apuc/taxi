@@ -6,7 +6,7 @@
  * Time: 10:55
  */
 
-namespace common\classes;
+namespace common\helpers;
 
 /**
  * Class Folder
@@ -23,7 +23,7 @@ class Folder
 
     public function __construct($path, $mode)
     {
-        $this->_fileImg = new \Imagick();
+        //$this->_fileImg = new \Imagick();
         $this->path = $path;
         $this->mode = $mode;
     }
