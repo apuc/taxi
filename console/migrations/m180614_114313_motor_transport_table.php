@@ -12,14 +12,14 @@ class m180614_114313_motor_transport_table extends Migration
      */
     public function safeUp()
     {
-        $this->createTable('request', [
-            'id' => $this->primaryKey()->unsigned(),
-            'user_id' => $this->integer(11)->notNull()->unsigned(),
-            'status' => $this->integer(2)->defaultValue(0)->unsigned(),
+        $this->createTable('motor_transport', [
+            'id' => $this->primaryKey(),
+            'user_id' => $this->integer(11)->notNull(),
+            'status' => $this->integer(2)->defaultValue(0),
             'type' => $this->string(255),
-            'car_id' => $this->integer(11)->notNull()->unsigned(),
+            'car_id' => $this->integer(11)->notNull(),
             'content' => $this->text(),
-            'dt_add' => $this->integer(11)->notNull()->unsigned(),
+            'dt_add' => $this->integer(11)->notNull(),
         ]);
     }
 
@@ -28,6 +28,6 @@ class m180614_114313_motor_transport_table extends Migration
      */
     public function safeDown()
     {
-        $this->dropTable('request');
+        $this->dropTable('motor_transport');
     }
 }
