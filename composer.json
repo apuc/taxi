@@ -32,7 +32,8 @@
         "fgh151/yii2-opengraph": "*",
         "hiqdev/yii2-yandex-metrika": "^0.2.0",
         "xtarantulz/yii2-input-img-preview": "dev-master",
-        "himiklab/yii2-easy-thumbnail-image-helper": "*"
+        "himiklab/yii2-easy-thumbnail-image-helper": "*",
+        "skeeks/yii2-slug-behavior": "*"
     },
     "require-dev": {
         "yiisoft/yii2-debug": "~2.0.0",
