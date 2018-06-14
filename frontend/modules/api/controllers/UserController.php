@@ -94,7 +94,7 @@ class UserController extends Controller {
 		$post = Yii::$app->request->post();
 		$token = Token::findOne(['token' => $post['token'] ]);
 		$user  = User::findOne( $token->user_id );
-		if($post['id']){
+		if(isset($post['id'])){
 			$user = User::findOne(['id' => $post['id']]);
 		}
 		if($token && $user) {
