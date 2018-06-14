@@ -9,11 +9,24 @@ use frontend\models\SignupForm;
 use frontend\modules\api\models\ApiUser;
 use yii\web\Controller;
 use yii;
+use yii\web\NotFoundHttpException;
+use yii\web\Response;
 
-class UserController extends DefaultController {
+class UserController extends Controller {
 
 	public $status = 0;
 	public $error_msg;
+	
+	public function beforeAction( $action ) {
+		if ( \Yii::$app->request->isPost ) {
+				\Yii::$app->response->format = Response::FORMAT_JSON;
+				$this->layout                = false;
+				return true;
+		} else {
+			throw  new NotFoundHttpException( 'Страница не найдена', 404 );
+		}
+	}
+	
 	
 	public function actionIndex() {
 		return $this->render( 'index' );
