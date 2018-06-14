@@ -7,12 +7,10 @@ use yii\helpers\Html;
 /* @var $model app\models\MotorTransport */
 
 $this->title = 'Create Motor Transport';
-$this->params['breadcrumbs'][] = ['label' => 'Motor Transports', 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => 'Авто транспорт', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="motor-transport-create">
-
-    <h1><?= Html::encode($this->title) ?></h1>
 
     <?= $this->render('_form', [
         'model' => $model,

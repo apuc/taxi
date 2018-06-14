@@ -22,9 +22,12 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'photo')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'status')->textInput(['maxlength' => true]) ?>
+    <?= $form->field($model, 'status')->dropDownList([
+        '1' => 'Активный',
+        '0' => 'Отключен',
+    ]);
+    ?>
 
-    <?= $form->field($model, 'dt_add')->textInput(['maxlength' => true]) ?>
 
     <div class="form-group">
         <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>
