@@ -6,21 +6,15 @@ use common\models\LoginForm;
 use common\models\Token;
 use common\models\User;
 use frontend\models\SignupForm;
+use frontend\modules\api\models\ApiUser;
 use yii\web\Controller;
 use yii;
 
-class UserController extends Controller {
+class UserController extends DefaultController {
 
 	public $status = 0;
 	public $error_msg;
-
-
-	public function beforeAction( $action ) {
-		$this->enableCsrfValidation = false;
-		return parent::beforeAction( $action );
-	}
-
-
+	
 	public function actionIndex() {
 		return $this->render( 'index' );
 	}
@@ -85,59 +79,51 @@ class UserController extends Controller {
 	
 	public function actionGetUser() {
 		$post = Yii::$app->request->post();
-		if ( Yii::$app->request->isPost ) {
-			\Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-			if ( isset( $post['token'] ) ) {
-				$token = Token::findOne( [ 'token' => $post['token'] ] );
-				$user  = User::findOne( $token->user_id );
-				if($token && $user) {
-					$this->status = 1;
-				}
-			}
-			if($this->status == 1) {
-				$result = [
-					'id' => $user->id,
-					'name' => $user->username,
-					'date' => $token->date_add,
-					'status' => $this->status,
-				];
-			} else {
-				$this->error_msg = 'Пользователь не существует!';
-				$result = [ 'status' => $this->status, 'error_msg' => $user->id ];
-			}
-			return $result;
+		$token = Token::findOne( [ 'token' => $post['token'] ] );
+		$user  = User::findOne( $token->user_id );
+		if($token && $user) {
+			$this->status = 1;
 		}
-		return false;
+		if($this->status == 1) {
+			$result = [
+				'id' => $user->id,
+				'name' => $user->username,
+				'date' => $user->created_at,
+				'status' => $this->status,
+			];
+		} else {
+			$this->error_msg = 'Пользователь не существует!';
+			$result = [ 'status' => $this->status, 'error_msg' => $user->id ];
+		}
+		return $result;
 	}
 	
 	public function actionGetList() {
 		$post = Yii::$app->request->post();
-		if ( Yii::$app->request->isPost ) {
-			\Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-			if ( isset( $post['token'] ) ) {
-				$token = Token::findOne( [ 'token' => $post['token'] ] );
-				if($token) {
-					$users = User::find()->limit(200)->all();
-					if($token && $users) {
-						$this->status = 1;
-					}
-				}
+		$model = new ApiUser();
+		$apiRequest["ApiUser"] = Yii::$app->request->post();
+		$token = Token::findOne( [ 'token' => $post['token'] ] );
+		if($token) {
+			$model->load($apiRequest);
+			$users = User::find()->offset($model->offset)->limit($model->limit)->all();
+			if($token && $users) {
+				$this->status = 1;
 			}
-			if($this->status == 1) {
-				$result = [];
-				foreach ( $users as $user ) {
-					$result[] = [
-						'id'     => $user->id,
-						'name'   => $user->username,
-						'status' => $this->status,
-					];
-				}
-			} else {
-				$this->error_msg = 'Ошибка токена!';
-				$result = [ 'status' => $this->status, 'error_msg' => $this->error_msg ];
-			}
-			return $result;
 		}
-		return false;
+		if($this->status == 1) {
+			$result = [];
+			foreach ( $users as $user ) {
+				$result[] = [
+					'id'     => $user->id,
+					'name'   => $user->username,
+					'date' => $user->created_at,
+					'status' => $this->status,
+				];
+			}
+		} else {
+			$this->error_msg = 'Ошибка токена!';
+			$result = [ 'status' => $this->status, 'error_msg' => $this->error_msg ];
+		}
+		return $result;
 	}
 }
