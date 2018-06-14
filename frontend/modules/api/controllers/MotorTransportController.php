@@ -20,14 +20,23 @@ use yii\widgets\ActiveForm;
 
 class MotorTransportController extends DefaultController {
 
-    private function SaveImg($val) {
-        define('UPLOAD_DIR', 'images/');
-        $img = $val;
-        $img = str_replace('data:image/png;base64,', '', $img);
-        $img = str_replace(' ', '+', $img);
-        $data = base64_decode($img);
+    private function SaveImg($img) {
+        $dir = '/media/upload/' . Yii::$app->user->id . '/' . date('Y-m-d') . '/';
+        $path = Yii::getAlias('@frontend/web' . $dir);
+        $folderThumb = new Folder($path, 0775);
+        $folderThumb->create();
+
+        $image_parts = explode(";base64,", $img);
+        $image_type_aux = explode("image/", $image_parts[0]);
+        $image_type = $image_type_aux[1];
+        $image_base64 = base64_decode($image_parts[1]);
         $file = UPLOAD_DIR . uniqid() . '.png';
-        $success = file_put_contents($file, $data);
+        //file_put_contents($file, $image_base64);
+
+        $folderImg = new Folder($path, 0775);
+        $folderImg->create()
+            ->file($image_base64)
+            ->save($file);
     }
 
 
@@ -76,7 +85,6 @@ class MotorTransportController extends DefaultController {
 
         return $models;
     }
-
 
 
 }
