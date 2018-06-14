@@ -17,7 +17,6 @@ class UserController extends Controller {
 
 	public function beforeAction( $action ) {
 		$this->enableCsrfValidation = false;
-
 		return parent::beforeAction( $action );
 	}
 
@@ -33,7 +32,7 @@ class UserController extends Controller {
 
 			$data["SignupForm"] = Yii::$app->request->post();
 			$model->load( $data );
-			\Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+			
 
 			$user = $model->signup();
 
@@ -82,5 +81,33 @@ class UserController extends Controller {
 		}
 
 		return $this->render( 'login', compact( "model" ) );
+	}
+	
+	public function actionGetUser() {
+		$post = Yii::$app->request->post();
+		if ( Yii::$app->request->isPost ) {
+			\Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+			if ( isset( $post['token'] ) ) {
+				$token = Token::findOne( [ 'token' => $post['token'] ] );
+				$user  = User::findOne( $token->user_id );
+				if($token && $user) {
+					$this->status = 1;
+				}
+			}
+			if($this->status == 1) {
+				$result = [
+					'id' => $user->id,
+					'name' => $user->username,
+					'email' => $user->email,
+					'token' => $token->token,
+					'status' => $this->status,
+				];
+			} else {
+				$this->error_msg = 'Пользователь не существует!';
+				$result = [ 'status' => $this->status, 'error_msg' => $user->id ];
+			}
+			return $result;
+		}
+		return false;
 	}
 }
