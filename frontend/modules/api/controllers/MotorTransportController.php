@@ -9,6 +9,7 @@
 namespace frontend\modules\api\controllers;
 
 use common\helpers\Constants;
+use common\helpers\Folder;
 use common\models\Token;
 use frontend\modules\api\models\ApiMotorTransport;
 use Yii;
@@ -26,17 +27,17 @@ class MotorTransportController extends DefaultController {
         $folderThumb = new Folder($path, 0775);
         $folderThumb->create();
 
-        $image_parts = explode(";base64,", $img);
-        $image_type_aux = explode("image/", $image_parts[0]);
-        $image_type = $image_type_aux[1];
-        $image_base64 = base64_decode($image_parts[1]);
-        $file = UPLOAD_DIR . uniqid() . '.png';
-        //file_put_contents($file, $image_base64);
-
-        $folderImg = new Folder($path, 0775);
-        $folderImg->create()
-            ->file($image_base64)
-            ->save($file);
+//        $image_parts = explode(";base64,", $img);
+//        $image_type_aux = explode("image/", $image_parts[0]);
+//        $image_type = $image_type_aux[1];
+//        $image_base64 = base64_decode($image_parts[1]);
+//        $file = $path . uniqid() . '.png';
+//        //file_put_contents($file, $image_base64);
+//
+//        $folderImg = new Folder($path, 0775);
+//        $folderImg->create()
+//            ->file($image_base64)
+//            ->save($file);
     }
 
 
@@ -46,7 +47,7 @@ class MotorTransportController extends DefaultController {
         $apiMotor["ApiMotorTransport"] = Yii::$app->request->post();
 
         $model->load($apiMotor);
-        $this->SaveImg($model->photo);
+        return $this->SaveImg($model->photo);
         $model->status = Constants::STATUS_ENABLED;
         $model->dt_add = time();
 
