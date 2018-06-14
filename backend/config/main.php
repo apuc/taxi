@@ -54,6 +54,7 @@ return [
 	            '/' => 'admin/index',
 	            '<controller:\w+>/<action:\w+>/' => '<controller>/<action>',
 	            'page/<view:[a-zA-Z0-9-]+>' => 'site/page',
+                'motor' => 'motor-transport/index',
             ],
         ],
         'cache' => [
