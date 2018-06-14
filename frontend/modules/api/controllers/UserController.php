@@ -79,8 +79,11 @@ class UserController extends DefaultController {
 	
 	public function actionGetUser() {
 		$post = Yii::$app->request->post();
-		$token = Token::findOne( [ 'token' => $post['token'] ] );
+		$token = Token::findOne(['token' => $post['token'] ]);
 		$user  = User::findOne( $token->user_id );
+		if($post['id']){
+			$user = User::findOne(['id' => $post['id']]);
+		}
 		if($token && $user) {
 			$this->status = 1;
 		}
@@ -93,7 +96,7 @@ class UserController extends DefaultController {
 			];
 		} else {
 			$this->error_msg = 'Пользователь не существует!';
-			$result = [ 'status' => $this->status, 'error_msg' => $user->id ];
+			$result = [ 'status' => $this->status, 'error_msg' => $this->error_msg ];
 		}
 		return $result;
 	}
