@@ -98,13 +98,43 @@ class UserController extends Controller {
 				$result = [
 					'id' => $user->id,
 					'name' => $user->username,
-					'email' => $user->email,
-					'token' => $token->token,
+					'date' => $token->date_add,
 					'status' => $this->status,
 				];
 			} else {
 				$this->error_msg = 'Пользователь не существует!';
 				$result = [ 'status' => $this->status, 'error_msg' => $user->id ];
+			}
+			return $result;
+		}
+		return false;
+	}
+	
+	public function actionGetList() {
+		$post = Yii::$app->request->post();
+		if ( Yii::$app->request->isPost ) {
+			\Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+			if ( isset( $post['token'] ) ) {
+				$token = Token::findOne( [ 'token' => $post['token'] ] );
+				if($token) {
+					$users = User::find()->limit(200)->all();
+					if($token && $users) {
+						$this->status = 1;
+					}
+				}
+			}
+			if($this->status == 1) {
+				$result = [];
+				foreach ( $users as $user ) {
+					$result[] = [
+						'id'     => $user->id,
+						'name'   => $user->username,
+						'status' => $this->status,
+					];
+				}
+			} else {
+				$this->error_msg = 'Ошибка токена!';
+				$result = [ 'status' => $this->status, 'error_msg' => $this->error_msg ];
 			}
 			return $result;
 		}
