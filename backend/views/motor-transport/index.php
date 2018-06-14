@@ -44,7 +44,16 @@ $this->params['breadcrumbs'][] = $this->title;
             'model',
             'year',
             'photo',
-            'status',
+            [
+                    'attribute' => 'status',
+                    'value' => function($model){
+                        if($model->status == 0)
+                            return 'Отключен';
+                        else
+                            return 'Активный';
+
+                    }
+            ],
             [
                     'attribute' => 'dt_add',
                     'value' => function($model){
