@@ -9,9 +9,11 @@ use Yii;
  *
  * @property int $id
  * @property string $name
- * @property string $country
  * @property string $slug
  * @property int $dt_add
+ * @property int $country_id
+ *
+ * @property Country $country
  */
 class City extends \yii\db\ActiveRecord
 {
@@ -29,8 +31,9 @@ class City extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['dt_add'], 'integer'],
-            [['name', 'country', 'slug'], 'string', 'max' => 255],
+            [['dt_add', 'country_id'], 'integer'],
+            [['name', 'slug'], 'string', 'max' => 255],
+            [['country_id'], 'exist', 'skipOnError' => true, 'targetClass' => Country::className(), 'targetAttribute' => ['country_id' => 'id']],
         ];
     }
 
@@ -42,9 +45,17 @@ class City extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'name' => 'Name',
-            'country' => 'Country',
             'slug' => 'Slug',
             'dt_add' => 'Dt Add',
+            'country_id' => 'Country ID',
         ];
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getCountry()
+    {
+        return $this->hasOne(Country::className(), ['id' => 'country_id']);
     }
 }
