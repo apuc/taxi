@@ -3,6 +3,7 @@
 namespace backend\controllers;
 
 use backend\models\MotorTransport;
+use common\models\User;
 use Yii;
 use backend\models\MotorTransportSearch;
 use yii\web\Controller;
@@ -36,11 +37,16 @@ class MotorTransportController extends Controller
     public function actionIndex()
     {
         $searchModel = new MotorTransportSearch();
+        $users = User::find()->all();
+        $searchModel->load($users);
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+
 
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
+            'users' => $users,
         ]);
     }
 

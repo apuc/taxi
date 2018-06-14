@@ -6,13 +6,11 @@ use yii\helpers\Html;
 /* @var $model app\models\MotorTransport */
 
 $this->title = 'Update Motor Transport: ' . $model->id;
-$this->params['breadcrumbs'][] = ['label' => 'Motor Transports', 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => 'Авто транспорт', 'url' => ['index']];
 $this->params['breadcrumbs'][] = ['label' => $model->id, 'url' => ['view', 'id' => $model->id]];
 $this->params['breadcrumbs'][] = 'Update';
 ?>
 <div class="motor-transport-update">
-
-    <h1><?= Html::encode($this->title) ?></h1>
 
     <?= $this->render('_form', [
         'model' => $model,
