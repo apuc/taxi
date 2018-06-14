@@ -1,12 +1,11 @@
 <?php
 
-namespace common\models;
+namespace backend\models;
 
 use Yii;
-use yii\db\ActiveRecord;
 
 /**
- * This is the model class for table "motor-transport".
+ * This is the model class for table "motor_transport".
  *
  * @property string $id
  * @property string $user_id
@@ -17,9 +16,8 @@ use yii\db\ActiveRecord;
  * @property string $status
  * @property string $dt_add
  */
-class MotorTransport extends ActiveRecord
+class MotorTransport extends \yii\db\ActiveRecord
 {
-
     /**
      * {@inheritdoc}
      */
@@ -34,7 +32,7 @@ class MotorTransport extends ActiveRecord
     public function rules()
     {
         return [
-            [['user_id', 'brand', 'model', 'year'], 'required'],
+            [['user_id', 'brand', 'model', 'year', 'dt_add'], 'required'],
             [['user_id', 'year', 'status', 'dt_add'], 'integer'],
             [['brand', 'model', 'photo'], 'string', 'max' => 254],
         ];
@@ -46,14 +44,14 @@ class MotorTransport extends ActiveRecord
     public function attributeLabels()
     {
         return [
-            'id' => Yii::t('request', 'ID'),
-            'user_id' => Yii::t('request', 'User ID'),
-            'brand' => Yii::t('request', 'Brand'),
-            'model' => Yii::t('request', 'Model'),
-            'year' => Yii::t('request', 'Year'),
-            'photo' => Yii::t('request', 'Photo'),
-            'status' => Yii::t('request', 'Status'),
-            'dt_add' => Yii::t('request', 'Dt Add'),
+            'id' => 'ID',
+            'user_id' => 'User ID',
+            'brand' => 'Brand',
+            'model' => 'Model',
+            'year' => 'Year',
+            'photo' => 'Photo',
+            'status' => 'Status',
+            'dt_add' => 'Dt Add',
         ];
     }
 }
