@@ -41,6 +41,7 @@ class DefaultController extends Controller {
 	public function beforeAction( $action ) {
 		if ( \Yii::$app->request->isPost ) {
 			if ( $this->isToken() ) {
+                header('Access-Control-Allow-Origin: *');
 				\Yii::$app->response->format = Response::FORMAT_JSON;
 				$this->layout                = false;
 
