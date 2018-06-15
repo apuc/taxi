@@ -140,6 +140,7 @@ class UserController extends Controller {
 			$this->error_msg = 'Ошибка токена!';
 			$result = [ 'status' => $this->status, 'error_msg' => $this->error_msg ];
 		}
+        header('Access-Control-Allow-Origin: *');
 		return $result;
 	}
 }
