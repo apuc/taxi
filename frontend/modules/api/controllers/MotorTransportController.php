@@ -22,22 +22,23 @@ use yii\widgets\ActiveForm;
 class MotorTransportController extends DefaultController {
 
     private function SaveImg($img) {
-        $dir = '/media/upload/' . Yii::$app->user->id . '/' . date('Y-m-d') . '/';
+        $dir = '/media/upload/' . Yii::$app->request->post()["user_id"] . '/' . date('Y-m-d') . '/';
         $path = Yii::getAlias('@frontend/web' . $dir);
         $folderThumb = new Folder($path, 0775);
         $folderThumb->create();
-
-//        $image_parts = explode(";base64,", $img);
-//        $image_type_aux = explode("image/", $image_parts[0]);
-//        $image_type = $image_type_aux[1];
-//        $image_base64 = base64_decode($image_parts[1]);
-//        $file = $path . uniqid() . '.png';
-//        //file_put_contents($file, $image_base64);
-//
+        //return "создалась папка";
+        $img = str_replace('data:image/png;base64,', '', $img);
+        $img = str_replace(' ', '+', $img);
+        $data = base64_decode($img);
+        $name = uniqid() . '.png';
+        $file = $path . $name;
+        //return $file;
+        $success = file_put_contents($file, $data);
+        return $name;
 //        $folderImg = new Folder($path, 0775);
 //        $folderImg->create()
-//            ->file($image_base64)
-//            ->save($file);
+//            ->file($file)
+//            ->save($data);
     }
 
 
@@ -47,7 +48,8 @@ class MotorTransportController extends DefaultController {
         $apiMotor["ApiMotorTransport"] = Yii::$app->request->post();
 
         $model->load($apiMotor);
-        return $this->SaveImg($model->photo);
+        //return $this->SaveImg($model->photo);
+        $model->photo = $this->SaveImg($model->photo);
         $model->status = Constants::STATUS_ENABLED;
         $model->dt_add = time();
 
