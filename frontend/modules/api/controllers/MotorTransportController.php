@@ -25,14 +25,13 @@ class MotorTransportController extends DefaultController {
         $data = base64_decode($img);
         $name = uniqid() . '.png';
         $file = $path . $name;
-        //return $file;
-        //$success = file_put_contents($file, $data);
-        //return $path;
+       // return $file;
+        $success = file_put_contents($file, $data);
 
-        $folderImg = new Folder($path, 0775);
-        $folderImg->create()
-            ->file($data)
-            ->save($name);
+//        $folderImg = new Folder($path, 0775);
+//        $folderImg->create()
+//            ->file($data)
+//            ->save($name);
         return $name;
     }
 
@@ -43,7 +42,6 @@ class MotorTransportController extends DefaultController {
         $apiMotor["ApiMotorTransport"] = Yii::$app->request->post();
 
         $model->load($apiMotor);
-        return $this->SaveImg($model->photo);
         $model->photo = $this->SaveImg($model->photo);
         $model->status = Constants::STATUS_ENABLED;
         $model->dt_add = time();
