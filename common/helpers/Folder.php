@@ -6,7 +6,7 @@
  * Time: 10:55
  */
 
-namespace common\classes;
+namespace common\helpers;
 
 /**
  * Class Folder
