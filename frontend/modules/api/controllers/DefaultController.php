@@ -17,16 +17,16 @@ class DefaultController extends Controller {
         return array_merge(parent::behaviors(), [
 
             // For cross-domain AJAX request
-            'corsFilter'  => [
-                'class' => \yii\filters\Cors::className(),
-                'cors'  => [
-                    // restrict access to domains:
-                    'Access-Control-Allow-Origin' => '*',
-                    'Access-Control-Request-Method'    => ['POST'],
-                    'Access-Control-Allow-Credentials' => true,
-                    'Access-Control-Max-Age'           => 3600,                 // Cache (seconds)
-                ],
-            ],
+            //'corsFilter'  => [
+            //    'class' => \yii\filters\Cors::className(),
+            //    'cors'  => [
+            //        // restrict access to domains:
+            //        'Access-Control-Allow-Origin' => '*',
+            //        'Access-Control-Request-Method'    => ['POST'],
+            //        'Access-Control-Allow-Credentials' => true,
+            //        'Access-Control-Max-Age'           => 3600,                 // Cache (seconds)
+            //    ],
+            //],
 
         ]);
     }
