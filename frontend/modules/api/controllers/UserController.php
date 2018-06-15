@@ -56,8 +56,8 @@ class UserController extends Controller {
 			];
 
 		}
-
-		return $this->render( 'index', compact( "model" ) );
+        header('Access-Control-Allow-Origin: *');
+        return $this->render( 'index', compact( "model" ) );
 	}
 
 	public function actionLogin() {
@@ -86,8 +86,8 @@ class UserController extends Controller {
 				return [ 'status' => $this->status, 'error_msg' => $this->error_msg ];
 			}
 		}
-
-		return $this->render( 'login', compact( "model" ) );
+        header('Access-Control-Allow-Origin: *');
+        return $this->render( 'login', compact( "model" ) );
 	}
 	
 	public function actionGetUser() {
@@ -111,7 +111,8 @@ class UserController extends Controller {
 			$this->error_msg = 'Пользователь не существует!';
 			$result = [ 'status' => $this->status, 'error_msg' => $this->error_msg ];
 		}
-		return $result;
+        header('Access-Control-Allow-Origin: *');
+        return $result;
 	}
 	
 	public function actionGetList() {
@@ -140,6 +141,7 @@ class UserController extends Controller {
 			$this->error_msg = 'Ошибка токена!';
 			$result = [ 'status' => $this->status, 'error_msg' => $this->error_msg ];
 		}
-		return $result;
+        header('Access-Control-Allow-Origin: *');
+        return $result;
 	}
 }
