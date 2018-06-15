@@ -10,13 +10,8 @@ namespace frontend\modules\api\controllers;
 
 use common\helpers\Constants;
 use common\helpers\Folder;
-use common\models\Token;
 use frontend\modules\api\models\ApiMotorTransport;
 use Yii;
-use yii\base\Controller;
-use yii\helpers\Url;
-use yii\web\NotFoundHttpException;
-use yii\web\Response;
 use yii\widgets\ActiveForm;
 
 class MotorTransportController extends DefaultController {
@@ -24,21 +19,21 @@ class MotorTransportController extends DefaultController {
     private function SaveImg($img) {
         $dir = '/media/upload/' . Yii::$app->request->post()["user_id"] . '/' . date('Y-m-d') . '/';
         $path = Yii::getAlias('@frontend/web' . $dir);
-        $folderThumb = new Folder($path, 0775);
-        $folderThumb->create();
-        //return "создалась папка";
+
         $img = str_replace('data:image/png;base64,', '', $img);
         $img = str_replace(' ', '+', $img);
         $data = base64_decode($img);
         $name = uniqid() . '.png';
         $file = $path . $name;
         //return $file;
-        $success = file_put_contents($file, $data);
+        //$success = file_put_contents($file, $data);
+        //return $path;
+
+        $folderImg = new Folder($path, 0775);
+        $folderImg->create()
+            ->file($data)
+            ->save($name);
         return $name;
-//        $folderImg = new Folder($path, 0775);
-//        $folderImg->create()
-//            ->file($file)
-//            ->save($data);
     }
 
 
@@ -48,7 +43,7 @@ class MotorTransportController extends DefaultController {
         $apiMotor["ApiMotorTransport"] = Yii::$app->request->post();
 
         $model->load($apiMotor);
-        //return $this->SaveImg($model->photo);
+        return $this->SaveImg($model->photo);
         $model->photo = $this->SaveImg($model->photo);
         $model->status = Constants::STATUS_ENABLED;
         $model->dt_add = time();
@@ -84,7 +79,7 @@ class MotorTransportController extends DefaultController {
         $apiMotor["ApiMotorTransport"] = Yii::$app->request->post();
 
         $modelPost->load($apiMotor);
-        $models = ApiMotorTransport::find()->where(['user_id' => $modelPost->user_id])->asArray()->one();
+        $models = ApiMotorTransport::find()->where(['user_id' => $modelPost->user_id])->asArray()->all();
 
         return $models;
     }
