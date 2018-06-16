@@ -42,12 +42,11 @@ class UserController extends Controller {
 			
 
 			$user = $model->signup();
-
+            header('Access-Control-Allow-Origin: *');
 			//вывод ошибок из модели юзера
 			if ( is_array( $user ) ) {
 				return $user;
 			}
-
 			return [
 				"status"   => $user->status,
 				"id"       => $user->id,
@@ -56,7 +55,6 @@ class UserController extends Controller {
 			];
 
 		}
-        header('Access-Control-Allow-Origin: *');
         return $this->render( 'index', compact( "model" ) );
 	}
 
@@ -66,6 +64,7 @@ class UserController extends Controller {
 
 
 		if ( Yii::$app->request->isPost ) {
+            header('Access-Control-Allow-Origin: *');
 			$data["LoginForm"] = Yii::$app->request->post();
 			$model->load( $data );
 			\Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
