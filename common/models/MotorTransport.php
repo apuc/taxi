@@ -35,7 +35,7 @@ class MotorTransport extends ActiveRecord
     {
         return [
             [['user_id', 'brand', 'model', 'year'], 'required'],
-            [['user_id', 'year', 'status', 'dt_add'], 'integer'],
+            [['user_id', 'year', 'status', 'dt_add', 'city_id'], 'integer'],
             [['brand', 'model'], 'string', 'max' => 254],
             [['photo'], 'string'],
         ];
@@ -54,6 +54,7 @@ class MotorTransport extends ActiveRecord
             'year' => Yii::t('request', 'Year'),
             'photo' => Yii::t('request', 'Photo'),
             'status' => Yii::t('request', 'Status'),
+            'dt_add' => Yii::t('request', 'Dt Add'),
             'dt_add' => Yii::t('request', 'Dt Add'),
         ];
     }
