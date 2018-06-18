@@ -20,20 +20,41 @@ class UserController extends Controller {
 
 	public $status = 0;
 	public $error_msg;
+	public $user;
+	public $token;
+	public $post;
+	public $profile;
 	
 	public function beforeAction( $action ) {
 		if ( \Yii::$app->request->isPost ) {
-				\Yii::$app->response->format = Response::FORMAT_JSON;
-				$this->layout                = false;
-				return true;
+			$this->post = Yii::$app->request->post();
+			\Yii::$app->response->format = Response::FORMAT_JSON;
+			$this->layout                = false;
+			if( $action->id != 'login' && $action->id != 'add' ){
+				if ( $this->isToken() ) {
+					$this->token = $this->isToken();
+					$this->user = User::findOne( $this->token->user_id );
+					$this->profile = Profile::findOne(['user_id' => $this->token->user_id]);
+					return true;
+				} else {
+					throw  new NotFoundHttpException( 'Страница не найдена', 404 );
+				}
+			}
+			return true;
 		} else {
 			throw  new NotFoundHttpException( 'Страница не найдена', 404 );
 		}
 	}
 	
-	
 	public function actionIndex() {
 		return $this->render( 'index' );
+	}
+	
+	private function isToken() {
+		if (isset(Yii::$app->request->post()["token"])){
+			return Token::findOne( [ "token" => Yii::$app->request->post()["token"] ] );
+		}
+		return false;
 	}
 
 	public function actionAdd() {
@@ -44,7 +65,6 @@ class UserController extends Controller {
 			$data["SignupForm"] = Yii::$app->request->post();
 			$model->load( $data );
 			
-
 			$user = $model->signup();
             header('Access-Control-Allow-Origin: *');
 			//вывод ошибок из модели юзера
@@ -63,9 +83,7 @@ class UserController extends Controller {
 	}
 
 	public function actionLogin() {
-
 		$model = new LoginForm();
-
 
 		if ( Yii::$app->request->isPost ) {
             header('Access-Control-Allow-Origin: *');
@@ -94,13 +112,11 @@ class UserController extends Controller {
 	}
 	
 	public function actionGetUser() {
-		$post = Yii::$app->request->post();
-		$token = Token::findOne(['token' => $post['token'] ]);
-		$user  = User::findOne( $token->user_id );
-		if(isset($post['id'])){
-			$user = User::findOne(['id' => $post['id']]);
+		$user = $this->user;
+		if(isset($this->post['id'])){
+			$user = User::findOne(['id' => $this->post['id']]);
 		}
-		if($token && $user) {
+		if($this->token && $user) {
 			$this->status = 1;
 		}
 		if($this->status == 1) {
@@ -119,16 +135,12 @@ class UserController extends Controller {
 	}
 	
 	public function actionGetList() {
-		$post = Yii::$app->request->post();
 		$model = new ApiUser();
 		$apiRequest["ApiUser"] = Yii::$app->request->post();
-		$token = Token::findOne( [ 'token' => $post['token'] ] );
-		if($token) {
-			$model->load($apiRequest);
-			$users = User::find()->offset($model->offset)->limit($model->limit)->all();
-			if($token && $users) {
-				$this->status = 1;
-			}
+		$model->load($apiRequest);
+		$users = User::find()->offset($model->offset)->limit($model->limit)->all();
+		if($this->token && $users) {
+			$this->status = 1;
 		}
 		if($this->status == 1) {
 			$result = [];
@@ -149,47 +161,42 @@ class UserController extends Controller {
 	}
 	
 	public function actionEdit() {
-		$post = Yii::$app->request->post();
-		$token = Token::findOne( [ 'token' => $post['token'] ] );
-		if($token){
-				$user  = User::findOne( $token->user_id );
-				if($post['email']) {
-					if(User::find()->where(['like', 'email', $post['email']])->one()) {
-						$this->error_msg = 'Почта уже успользуется!';
-						$result = [ 'status' => $this->status, 'error_msg' => $this->error_msg ];
-						return $result;
-					}
-					$user->email = $post['email'];
-					if(!$user->save()) {
-						$this->error_msg = 'Ошибка!';
-						$result = [ 'status' => $this->status, 'error_msg' => $this->error_msg ];
-					} else {
-						$this->status = 1;
-						$result = ['email' => $post['email'], 'message' => 'Почта изменена!', 'status' => $this->status,];
-					}
-					return $result;
+		if($this->post['email']) {
+			if(User::find()->where(['like', 'email', $this->post['email']])->one()) {
+				$this->error_msg = 'Почта уже успользуется!';
+				$result = [ 'status' => $this->status, 'error_msg' => $this->error_msg ];
+				return $result;
+			}
+			$this->user->email = $this->post['email'];
+			if(!$this->user->save()) {
+				$this->error_msg = 'Ошибка!';
+				$result = [ 'status' => $this->status, 'error_msg' => $this->error_msg ];
+			} else {
+				$this->status = 1;
+				$result = ['email' => $this->post['email'], 'message' => 'Почта изменена!', 'status' => $this->status,];
+			}
+			return $result;
+		}
+		if($this->post['password']) {
+			if(!$this->user->validatePassword($this->post['password'])){
+				$this->error_msg = 'Введите старый пароль!';
+				return $result = [ 'status' => $this->status, 'error_msg' => $this->error_msg ];
+			} else {
+				if(!$this->post['new_password']){
+					$this->error_msg = 'Введите новый пароль!';
+					return $result = [ 'status' => $this->status, 'error_msg' => $this->error_msg ];
 				}
-				if($post['password']) {
-					if(!$user->validatePassword($post['password'])){
-						$this->error_msg = 'Введите старый пароль!';
-						return $result = [ 'status' => $this->status, 'error_msg' => $this->error_msg ];
-					} else {
-						if(!$post['new_password']){
-							$this->error_msg = 'Введите новый пароль!';
-							return $result = [ 'status' => $this->status, 'error_msg' => $this->error_msg ];
-						}
-					}
-					$user->setPassword($post['new_password']);
-					$user->generateAuthKey();
-					if(!$user->save()) {
-						$this->error_msg = 'Ошибка!';
-						$result = [ 'status' => $this->status, 'error_msg' => $this->error_msg ];
-					} else {
-						$this->status = 1;
-						$result = ['password' => $post['new_password'], 'message' => 'Пароль изменен!', 'status' => $this->status,];
-					}
-					return $result;
-				}
+			}
+			$this->user->setPassword($this->post['new_password']);
+			$this->user->generateAuthKey();
+			if(!$this->user->save()) {
+				$this->error_msg = 'Ошибка!';
+				$result = [ 'status' => $this->status, 'error_msg' => $this->error_msg ];
+			} else {
+				$this->status = 1;
+				$result = ['password' => $this->post['new_password'], 'message' => 'Пароль изменен!', 'status' => $this->status,];
+			}
+			return $result;
 		}
 		return false;
 	}
@@ -211,40 +218,33 @@ class UserController extends Controller {
 	}
 	
 	public function actionAvatar() {
-		$post = Yii::$app->request->post();
-		$token = Token::findOne( [ 'token' => $post['token'] ] );
-		if($token) {
-			$profile = Profile::findOne(['user_id' => $token->user_id]);
-			if($profile) {
-				unlink($profile->avatar);
-				$profile->avatar = $this->SaveImg($post['avatar']);
-				$profile->updated_at = time();
-				if(!$profile->save()) {
-					$this->error_msg = 'Ошибка загрузки файла!';
-					$result       = [ 'id' => $profile->user_id,'message' => $this->error_msg,'status' => $this->status, ];
-				} else {
-					$this->status = 1;
-					$result       = [ 'id' => $profile->user_id,'message' => 'Аватар изменен!','status' => $this->status, ];
-				}
-				return $result;
+		if($this->profile) {
+			unlink($this->profile->avatar);
+			$this->profile->avatar = $this->SaveImg($this->post['avatar']);
+			$this->profile->updated_at = time();
+			if(!$this->profile->save()) {
+				$this->error_msg = 'Ошибка загрузки файла!';
+				$result       = [ 'id' => $this->profile->user_id,'message' => $this->error_msg,'status' => $this->status, ];
+			} else {
+				$this->status = 1;
+				$result       = [ 'id' => $this->profile->user_id,'message' => 'Аватар изменен!','status' => $this->status, ];
 			}
-			$model = new ApiProfile();
-			$apiProfile["ApiProfile"] = Yii::$app->request->post();
-			
-			$model->load( $apiProfile );
-			$model->user_id = $token->user_id;
-			$model->avatar     = $this->SaveImg( $model->avatar );
-			$model->created_at = time();
-			$model->updated_at = time();
-			
-			if ( ! $model->save() ) {
-				return ActiveForm::validate( $model );
-			}
-			$this->status = 1;
-			$result       = [ 'id' => $model->user_id,'message' => 'Аватар добавлен!','status' => $this->status, ];
-			
 			return $result;
 		}
-		return false;
+		$model = new ApiProfile();
+		$apiProfile["ApiProfile"] = Yii::$app->request->post();
+		
+		$model->load( $apiProfile );
+		$model->user_id = $this->token->user_id;
+		$model->avatar     = $this->SaveImg( $model->avatar );
+		$model->created_at = time();
+		$model->updated_at = time();
+		if ( ! $model->save() ) {
+			return ActiveForm::validate( $model );
+		}
+		$this->status = 1;
+		$result       = [ 'id' => $model->user_id,'message' => 'Аватар добавлен!','status' => $this->status, ];
+		
+		return $result;
 	}
 }
