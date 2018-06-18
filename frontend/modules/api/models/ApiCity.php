@@ -2,21 +2,20 @@
 /**
  * Created by PhpStorm.
  * User: mecha
- * Date: 13.06.2018
- * Time: 11:00
+ * Date: 15.06.2018
+ * Time: 11:30
  */
 
 namespace frontend\modules\api\models;
 
-use common\models\MotorTransport;
+use common\models\City;
 
-
-class ApiMotorTransport extends MotorTransport {
-
+class ApiCity extends City {
 
     public function rules() {
         $rules = parent::rules();
 
         return $rules;
     }
+
 }

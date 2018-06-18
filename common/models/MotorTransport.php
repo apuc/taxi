@@ -36,7 +36,8 @@ class MotorTransport extends ActiveRecord
         return [
             [['user_id', 'brand', 'model', 'year'], 'required'],
             [['user_id', 'year', 'status', 'dt_add'], 'integer'],
-            [['brand', 'model', 'photo'], 'string', 'max' => 254],
+            [['brand', 'model'], 'string', 'max' => 254],
+            [['photo'], 'string'],
         ];
     }
 
