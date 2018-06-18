@@ -2,16 +2,15 @@
 
 namespace backend\models;
 
-use backend\models\MotorTransport;
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-
+use backend\models\Request;
 
 /**
- * MotorTransportSearch represents the model behind the search form of `app\models\MotorTransport`.
+ * RequestSearch represents the model behind the search form of `backend\models\Request`.
  */
-class MotorTransportSearch extends MotorTransport
+class RequestSearch extends Request
 {
     /**
      * {@inheritdoc}
@@ -19,8 +18,8 @@ class MotorTransportSearch extends MotorTransport
     public function rules()
     {
         return [
-            [['id', 'user_id', 'year', 'status', 'dt_add'], 'integer'],
-            [['brand', 'model', 'photo'], 'safe'],
+            [['id', 'user_id', 'status', 'car_id', 'dt_add', 'city_id'], 'integer'],
+            [['type', 'content'], 'safe'],
         ];
     }
 
@@ -42,9 +41,8 @@ class MotorTransportSearch extends MotorTransport
      */
     public function search($params)
     {
-        $query = MotorTransport::find()->with('user');
+        $query = Request::find();
 
-        //$query->joinWith(['user']);
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
@@ -52,7 +50,6 @@ class MotorTransportSearch extends MotorTransport
         ]);
 
         $this->load($params);
-//        var_dump(Yii::$app->request->get());die;
 
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
@@ -64,14 +61,14 @@ class MotorTransportSearch extends MotorTransport
         $query->andFilterWhere([
             'id' => $this->id,
             'user_id' => $this->user_id,
-            'year' => $this->year,
             'status' => $this->status,
+            'car_id' => $this->car_id,
             'dt_add' => $this->dt_add,
+            'city_id' => $this->city_id,
         ]);
 
-        $query->andFilterWhere(['like', 'brand', $this->brand])
-            ->andFilterWhere(['like', 'model', $this->model])
-            ->andFilterWhere(['like', 'photo', $this->photo]);
+        $query->andFilterWhere(['like', 'type', $this->type])
+            ->andFilterWhere(['like', 'content', $this->content]);
 
         return $dataProvider;
     }

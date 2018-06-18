@@ -2,18 +2,17 @@
 
 namespace backend\controllers;
 
-use backend\models\MotorTransport;
-use backend\models\User;
 use Yii;
-use backend\models\MotorTransportSearch;
+use backend\models\Request;
+use backend\models\RequestSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
 /**
- * MotorTransportController implements the CRUD actions for MotorTransport model.
+ * RequestController implements the CRUD actions for Request model.
  */
-class MotorTransportController extends Controller
+class RequestController extends Controller
 {
     /**
      * {@inheritdoc}
@@ -31,27 +30,22 @@ class MotorTransportController extends Controller
     }
 
     /**
-     * Lists all MotorTransport models.
+     * Lists all Request models.
      * @return mixed
      */
     public function actionIndex()
     {
-        $searchModel = new MotorTransportSearch();
-        $users = User::find()->all();
-        $searchModel->load($users);
+        $searchModel = new RequestSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-
-
 
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
-            'users' => $users,
         ]);
     }
 
     /**
-     * Displays a single MotorTransport model.
+     * Displays a single Request model.
      * @param string $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
@@ -64,13 +58,13 @@ class MotorTransportController extends Controller
     }
 
     /**
-     * Creates a new MotorTransport model.
+     * Creates a new Request model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
     public function actionCreate()
     {
-        $model = new MotorTransport();
+        $model = new Request();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -82,7 +76,7 @@ class MotorTransportController extends Controller
     }
 
     /**
-     * Updates an existing MotorTransport model.
+     * Updates an existing Request model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param string $id
      * @return mixed
@@ -102,7 +96,7 @@ class MotorTransportController extends Controller
     }
 
     /**
-     * Deletes an existing MotorTransport model.
+     * Deletes an existing Request model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param string $id
      * @return mixed
@@ -116,15 +110,15 @@ class MotorTransportController extends Controller
     }
 
     /**
-     * Finds the MotorTransport model based on its primary key value.
+     * Finds the Request model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param string $id
-     * @return MotorTransport the loaded model
+     * @return Request the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = MotorTransport::findOne($id)) !== null) {
+        if (($model = Request::findOne($id)) !== null) {
             return $model;
         }
 
