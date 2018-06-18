@@ -3,6 +3,7 @@
 namespace frontend\modules\api\controllers;
 
 use common\models\LoginForm;
+use common\models\Profile;
 use common\models\Token;
 use common\models\User;
 use frontend\models\SignupForm;
@@ -211,8 +212,16 @@ class UserController extends Controller {
 		$post = Yii::$app->request->post();
 		$token = Token::findOne( [ 'token' => $post['token'] ] );
 		if($token) {
+			$profile = Profile::findOne(['user_id' => $token->user_id]);
+			if($profile) {
+				$profile->avatar = $this->SaveImg($post['avatar']);
+				$profile->updated_at = time();
+				$profile->save();
+				$this->status = 1;
+				$result       = [ 'id' => $profile->user_id,'message' => 'Аватар изменен!','status' => $this->status, ];
+				return $result;
+			}
 			$model = new ApiProfile();
-			
 			$apiProfile["ApiProfile"] = Yii::$app->request->post();
 			
 			$model->load( $apiProfile );
