@@ -195,7 +195,6 @@ class UserController extends Controller {
 	}
 	
 	private function SaveImg($img) {
-	
 		$dir = '/media/upload/' . Yii::$app->request->post()["user_id"] . '/' . date('Y-m-d') . '/';
 		$path = Yii::getAlias('@frontend/web' . $dir);
 		$folderCreate = new Folder($path, 0775);
