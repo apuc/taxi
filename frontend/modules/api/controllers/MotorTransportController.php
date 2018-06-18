@@ -19,6 +19,8 @@ class MotorTransportController extends DefaultController {
     private function SaveImg($img) {
         $dir = '/media/upload/' . Yii::$app->request->post()["user_id"] . '/' . date('Y-m-d') . '/';
         $path = Yii::getAlias('@frontend/web' . $dir);
+        $folderCreate = new Folder($path, 0775);
+        $folderCreate->create();
 
         $img = str_replace('data:image/png;base64,', '', $img);
         $img = str_replace(' ', '+', $img);
@@ -32,7 +34,7 @@ class MotorTransportController extends DefaultController {
 //        $folderImg->create()
 //            ->file($data)
 //            ->save($name);
-        return $name;
+        return $path;
     }
 
 
