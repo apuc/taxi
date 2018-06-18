@@ -6,11 +6,13 @@ use common\models\LoginForm;
 use common\models\Token;
 use common\models\User;
 use frontend\models\SignupForm;
+use frontend\modules\api\models\ApiProfile;
 use frontend\modules\api\models\ApiUser;
 use yii\web\Controller;
 use yii;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
+use yii\widgets\ActiveForm;
 
 class UserController extends Controller {
 
@@ -186,6 +188,46 @@ class UserController extends Controller {
 					}
 					return $result;
 				}
+		}
+		return false;
+	}
+	
+	private function SaveImg($img) {
+	
+		$dir = '/media/upload/' . Yii::$app->request->post()["user_id"] . '/' . date('Y-m-d') . '/';
+		$path = Yii::getAlias('@frontend/web' . $dir);
+		
+		$img = str_replace('data:image/png;base64,', '', $img);
+		$img = str_replace(' ', '+', $img);
+		$data = base64_decode($img);
+		$name = uniqid() . '.png';
+		$file = $path . $name;
+		file_put_contents($file, $data);
+		
+		return $file;
+	}
+	
+	public function actionAvatar() {
+		$post = Yii::$app->request->post();
+		$token = Token::findOne( [ 'token' => $post['token'] ] );
+		if($token) {
+			$model = new ApiProfile();
+			
+			$apiProfile["ApiProfile"] = Yii::$app->request->post();
+			
+			$model->load( $apiProfile );
+			$model->user_id = $token->user_id;
+			$model->avatar     = $this->SaveImg( $model->avatar );
+			$model->created_at = time();
+			$model->updated_at = time();
+			
+			if ( ! $model->save() ) {
+				return ActiveForm::validate( $model );
+			}
+			$this->status = 1;
+			$result       = [ 'id' => $model->user_id,'message' => 'Аватар добавлен!','status' => $this->status, ];
+			
+			return $result;
 		}
 		return false;
 	}
