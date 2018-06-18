@@ -142,4 +142,50 @@ class UserController extends Controller {
 		}
 		return $result;
 	}
+	
+	public function actionEdit() {
+		$post = Yii::$app->request->post();
+		$token = Token::findOne( [ 'token' => $post['token'] ] );
+		if($token){
+				$user  = User::findOne( $token->user_id );
+				if($post['email']) {
+					if(User::find()->where(['like', 'email', $post['email']])->one()) {
+						$this->error_msg = 'Почта уже успользуется!';
+						$result = [ 'status' => $this->status, 'error_msg' => $this->error_msg ];
+						return $result;
+					}
+					$user->email = $post['email'];
+					if(!$user->save()) {
+						$this->error_msg = 'Ошибка!';
+						$result = [ 'status' => $this->status, 'error_msg' => $this->error_msg ];
+					} else {
+						$this->status = 1;
+						$result = ['email' => $post['email'], 'message' => 'Почта изменена!', 'status' => $this->status,];
+					}
+					return $result;
+				}
+				if($post['password']) {
+					if(!$user->validatePassword($post['password'])){
+						$this->error_msg = 'Введите старый пароль!';
+						return $result = [ 'status' => $this->status, 'error_msg' => $this->error_msg ];
+					} else {
+						if(!$post['new_password']){
+							$this->error_msg = 'Введите новый пароль!';
+							return $result = [ 'status' => $this->status, 'error_msg' => $this->error_msg ];
+						}
+					}
+					$user->setPassword($post['new_password']);
+					$user->generateAuthKey();
+					if(!$user->save()) {
+						$this->error_msg = 'Ошибка!';
+						$result = [ 'status' => $this->status, 'error_msg' => $this->error_msg ];
+					} else {
+						$this->status = 1;
+						$result = ['password' => $post['new_password'], 'message' => 'Пароль изменен!', 'status' => $this->status,];
+					}
+					return $result;
+				}
+		}
+		return false;
+	}
 }
