@@ -69,6 +69,13 @@ class MotorTransportController extends DefaultController {
 
         $apiMotor["ApiMotorTransport"] = Yii::$app->request->post();
 
+        if(Yii::$app->request->post()['photo']){
+            //var_dump(Yii::$app->request->post()['photo']);die();
+            $path = Yii::getAlias('@frontend/web' . $model->photo);
+            if($model->photo)
+                unlink($path);
+        }
+
         $model->load($apiMotor);
 
         if ($model->photo) {
