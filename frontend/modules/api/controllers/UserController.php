@@ -2,6 +2,7 @@
 
 namespace frontend\modules\api\controllers;
 
+use common\helpers\Folder;
 use common\models\LoginForm;
 use common\models\Profile;
 use common\models\Token;
@@ -197,6 +198,8 @@ class UserController extends Controller {
 	
 		$dir = '/media/upload/' . Yii::$app->request->post()["user_id"] . '/' . date('Y-m-d') . '/';
 		$path = Yii::getAlias('@frontend/web' . $dir);
+		$folderCreate = new Folder($path, 0775);
+		$folderCreate->create();
 		
 		$img = str_replace('data:image/png;base64,', '', $img);
 		$img = str_replace(' ', '+', $img);
@@ -214,6 +217,7 @@ class UserController extends Controller {
 		if($token) {
 			$profile = Profile::findOne(['user_id' => $token->user_id]);
 			if($profile) {
+				unlink($profile->avatar);
 				$profile->avatar = $this->SaveImg($post['avatar']);
 				$profile->updated_at = time();
 				$profile->save();
