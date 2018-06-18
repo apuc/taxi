@@ -15,10 +15,6 @@ $this->params['breadcrumbs'][] = $this->title;
     <h1><?= Html::encode($this->title) ?></h1>
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
-    <p>
-        <?= Html::a('Create User', ['create'], ['class' => 'btn btn-success']) ?>
-    </p>
-
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
@@ -28,12 +24,22 @@ $this->params['breadcrumbs'][] = $this->title;
             'id',
             'username',
             'auth_key',
-            'password_hash',
-            'password_reset_token',
+            //'password_hash',
+            //'password_reset_token',
             'email:email',
             'status',
-            'created_at',
-            'updated_at',
+            [
+                'attribute' => 'created_at',
+                'value' => function($model){
+                    return date('d.m.Y', $model->created_at);
+                }
+            ],
+            [
+                'attribute' => 'updated_at',
+                'value' => function($model){
+                    return date('d.m.Y', $model->updated_at);
+                }
+            ],
             'city_id',
 
             ['class' => 'yii\grid\ActionColumn'],

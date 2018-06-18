@@ -2,11 +2,11 @@
 
 namespace backend\controllers;
 
+use backend\models\City;
 use backend\models\CitySearch;
 use common\models\Token;
 use common\models\User;
 use Yii;
-use \models\City;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
