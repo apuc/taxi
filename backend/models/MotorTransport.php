@@ -2,7 +2,7 @@
 
 namespace backend\models;
 
-use common\models\User;
+use backend\models\User;
 use Yii;
 
 /**
@@ -17,26 +17,12 @@ use Yii;
  * @property string $status
  * @property string $dt_add
  */
-class MotorTransport extends \yii\db\ActiveRecord
+class MotorTransport extends \common\models\MotorTransport
 {
-    /**
-     * {@inheritdoc}
-     */
-    public static function tableName()
-    {
-        return 'motor_transport';
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function rules()
-    {
-        return [
-            [['user_id', 'brand', 'model', 'year', 'dt_add'], 'required'],
-            [['user_id', 'year', 'status', 'dt_add'], 'integer'],
-            [['brand', 'model', 'photo'], 'string', 'max' => 254],
-        ];
+    public function rules() {
+        $rules = parent::rules();
+        $rules[] =  [['user_id', 'brand', 'model', 'year'], 'required', "message"=>"Обязательное поле"];
+        return $rules;
     }
 
     /**

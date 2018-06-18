@@ -2,16 +2,15 @@
 
 namespace backend\models;
 
-use backend\models\MotorTransport;
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-
+use backend\models\User;
 
 /**
- * MotorTransportSearch represents the model behind the search form of `app\models\MotorTransport`.
+ * UserSearch represents the model behind the search form of `app\models\User`.
  */
-class MotorTransportSearch extends MotorTransport
+class UserSearch extends User
 {
     /**
      * {@inheritdoc}
@@ -19,8 +18,8 @@ class MotorTransportSearch extends MotorTransport
     public function rules()
     {
         return [
-            [['id', 'user_id', 'year', 'status', 'dt_add'], 'integer'],
-            [['brand', 'model', 'photo'], 'safe'],
+            [['id', 'status', 'created_at', 'updated_at', 'city_id'], 'integer'],
+            [['username', 'auth_key', 'password_hash', 'password_reset_token', 'email'], 'safe'],
         ];
     }
 
@@ -42,9 +41,8 @@ class MotorTransportSearch extends MotorTransport
      */
     public function search($params)
     {
-        $query = MotorTransport::find()->with('user');
+        $query = User::find();
 
-        //$query->joinWith(['user']);
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
@@ -52,7 +50,6 @@ class MotorTransportSearch extends MotorTransport
         ]);
 
         $this->load($params);
-//        var_dump(Yii::$app->request->get());die;
 
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
@@ -63,15 +60,17 @@ class MotorTransportSearch extends MotorTransport
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
-            'user_id' => $this->user_id,
-            'year' => $this->year,
             'status' => $this->status,
-            'dt_add' => $this->dt_add,
+            'created_at' => $this->created_at,
+            'updated_at' => $this->updated_at,
+            'city_id' => $this->city_id,
         ]);
 
-        $query->andFilterWhere(['like', 'brand', $this->brand])
-            ->andFilterWhere(['like', 'model', $this->model])
-            ->andFilterWhere(['like', 'photo', $this->photo]);
+        $query->andFilterWhere(['like', 'username', $this->username])
+            ->andFilterWhere(['like', 'auth_key', $this->auth_key])
+            ->andFilterWhere(['like', 'password_hash', $this->password_hash])
+            ->andFilterWhere(['like', 'password_reset_token', $this->password_reset_token])
+            ->andFilterWhere(['like', 'email', $this->email]);
 
         return $dataProvider;
     }
