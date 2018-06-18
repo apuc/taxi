@@ -25,7 +25,7 @@ class MotorTransportController extends DefaultController {
         $data = base64_decode($img);
         $name = uniqid() . '.png';
         $file = $path . $name;
-       // return $file;
+        // return $file;
         $success = file_put_contents($file, $data);
 
 //        $folderImg = new Folder($path, 0775);
@@ -42,7 +42,8 @@ class MotorTransportController extends DefaultController {
         $apiMotor["ApiMotorTransport"] = Yii::$app->request->post();
 
         $model->load($apiMotor);
-        $model->photo = $this->SaveImg($model->photo);
+        if($model->photo)
+            $model->photo = $this->SaveImg($model->photo);
         $model->status = Constants::STATUS_ENABLED;
         $model->dt_add = time();
 
@@ -55,7 +56,7 @@ class MotorTransportController extends DefaultController {
 
     public function actionDel() {
         $id = Yii::$app->request->post()["id"];
-        ApiMotorTransport::deleteAll($id);
+        ApiMotorTransport::deleteAll(['id' => $id]);
 
         return "Заявка удалена";
     }
@@ -64,8 +65,17 @@ class MotorTransportController extends DefaultController {
         $id = Yii::$app->request->post()["id"];
         $model = ApiMotorTransport::findOne($id);
 
-        if (is_null($model)) {
-            return "None";
+        $apiMotor["ApiMotorTransport"] = Yii::$app->request->post();
+
+        $model->load($apiMotor);
+
+        if($model->photo){
+            $model->photo = $this->SaveImg($model->photo);
+        }
+        $model->dt_add = time();
+
+        if (!$model->save()) {
+            return 'Ошибка редактирования';
         }
 
         return $model->toArray();

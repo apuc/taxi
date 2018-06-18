@@ -2,11 +2,11 @@
 
 namespace backend\controllers;
 
+use backend\models\CitySearch;
 use common\models\Token;
 use common\models\User;
 use Yii;
-use backend\models\City;
-use backend\models\CitySearch;
+use \models\City;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -37,7 +37,7 @@ class CityController extends Controller
     	$post = Yii::$app->request->post();
     	if (isset($post["token"])){
     		$token = Token::findOne(["token"=>$post["token"]]);
-    		$user = User::findOne($token->user_id)->to;
+    		$user = User::findOne($token->user_id);
 	    }
 
     }

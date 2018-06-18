@@ -43,8 +43,13 @@ class CityController extends DefaultController {
         $id = Yii::$app->request->post()["id"];
         $model = ApiCity::findOne($id);
 
-        if (is_null($model)) {
-            return "None";
+        $apiCity["ApiCity"] = Yii::$app->request->post();
+
+        $model->load($apiCity);
+        $model->dt_add = time();
+
+        if (!$model->save()) {
+            return ActiveForm::validate($model);
         }
 
         return $model->toArray();
