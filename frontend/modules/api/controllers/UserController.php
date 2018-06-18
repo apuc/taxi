@@ -219,9 +219,13 @@ class UserController extends Controller {
 				unlink($profile->avatar);
 				$profile->avatar = $this->SaveImg($post['avatar']);
 				$profile->updated_at = time();
-				$profile->save();
-				$this->status = 1;
-				$result       = [ 'id' => $profile->user_id,'message' => 'Аватар изменен!','status' => $this->status, ];
+				if(!$profile->save()) {
+					$this->error_msg = 'Ошибка загрузки файла!';
+					$result       = [ 'id' => $profile->user_id,'message' => $this->error_msg,'status' => $this->status, ];
+				} else {
+					$this->status = 1;
+					$result       = [ 'id' => $profile->user_id,'message' => 'Аватар изменен!','status' => $this->status, ];
+				}
 				return $result;
 			}
 			$model = new ApiProfile();
