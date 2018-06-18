@@ -9,6 +9,7 @@
 namespace frontend\modules\api\controllers;
 
 
+use common\models\Country;
 use frontend\modules\api\models\ApiCountry;
 use Yii;
 use yii\widgets\ActiveForm;
@@ -21,6 +22,9 @@ class CountryController extends DefaultController {
         $apiCountry["ApiCountry"] = Yii::$app->request->post();
 
         $model->load($apiCountry);
+
+        if(Country::find()->where(['name'=>$model->name]))
+            return 'Такой город уже существует';
 
         if (!$model->save()) {
             return ActiveForm::validate($model);
@@ -39,9 +43,14 @@ class CountryController extends DefaultController {
     public function actionEdit() {
         $id = Yii::$app->request->post()["id"];
         $model = ApiCountry::findOne($id);
+        $apiCountry["ApiCountry"] = Yii::$app->request->post();
 
-        if (is_null($model)) {
-            return "None";
+        $model->load($apiCountry);
+        if(Country::find()->where(['name'=>$model->name])->one())
+            return 'Такая страна уже существует';
+
+        if (!$model->save()) {
+            return 'Ошибка редактирования';
         }
 
         return $model->toArray();
@@ -53,7 +62,7 @@ class CountryController extends DefaultController {
         $apiCountry["ApiCountry"] = Yii::$app->request->post();
 
         $modelPost->load($apiCountry);
-        $models = ApiCountry::find()->where(['country_id' => $modelPost->id])->asArray()->one();
+        $models = ApiCountry::find()->where(['name' => $modelPost->name])->asArray()->one();
 
         return $models;
     }

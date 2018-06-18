@@ -33,7 +33,8 @@
 					[ 'label' => 'Menu Yii2', 'options' => [ 'class' => 'header' ] ],
 					[ 'label' => 'Gii', 'icon' => 'file-code-o', 'url' => [ '/gii' ] ],
 					[ 'label' => 'Debug', 'icon' => 'dashboard', 'url' => [ '/debug' ] ],
-					[ 'label' => 'Motor transport', 'url' => [ '/motor' ] ],
+					[ 'label' => 'Автотранс', 'url' => [ '/motor' ] ],
+                    [ 'label' => 'Пользователи', 'url' => [ '/users' ] ],
 					[
 						'label' => "Местоположение",
 						'url'   => [ "#" ],

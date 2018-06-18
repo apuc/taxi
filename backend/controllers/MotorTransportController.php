@@ -3,7 +3,7 @@
 namespace backend\controllers;
 
 use backend\models\MotorTransport;
-use common\models\User;
+use backend\models\User;
 use Yii;
 use backend\models\MotorTransportSearch;
 use yii\web\Controller;

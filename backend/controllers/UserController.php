@@ -2,21 +2,23 @@
 
 namespace backend\controllers;
 
+use backend\models\User;
+use backend\models\UserSearch;
 use Yii;
-use backend\models\Country;
-use backend\models\CountrySearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
 /**
- * CountryController implements the CRUD actions for Country model.
+ * UserController implements the CRUD actions for User model.
  */
-class CountryController extends Controller {
+class UserController extends Controller
+{
     /**
      * {@inheritdoc}
      */
-    public function behaviors() {
+    public function behaviors()
+    {
         return [
             'verbs' => [
                 'class' => VerbFilter::className(),
@@ -28,11 +30,12 @@ class CountryController extends Controller {
     }
 
     /**
-     * Lists all Country models.
+     * Lists all User models.
      * @return mixed
      */
-    public function actionIndex() {
-        $searchModel = new CountrySearch();
+    public function actionIndex()
+    {
+        $searchModel = new UserSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
@@ -42,24 +45,26 @@ class CountryController extends Controller {
     }
 
     /**
-     * Displays a single Country model.
+     * Displays a single User model.
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionView($id) {
+    public function actionView($id)
+    {
         return $this->render('view', [
             'model' => $this->findModel($id),
         ]);
     }
 
     /**
-     * Creates a new Country model.
+     * Creates a new User model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-    public function actionCreate() {
-        $model = new Country();
+    public function actionCreate()
+    {
+        $model = new User();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -71,13 +76,14 @@ class CountryController extends Controller {
     }
 
     /**
-     * Updates an existing Country model.
+     * Updates an existing User model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionUpdate($id) {
+    public function actionUpdate($id)
+    {
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
@@ -90,27 +96,29 @@ class CountryController extends Controller {
     }
 
     /**
-     * Deletes an existing Country model.
+     * Deletes an existing User model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionDelete($id) {
+    public function actionDelete($id)
+    {
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);
     }
 
     /**
-     * Finds the Country model based on its primary key value.
+     * Finds the User model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
-     * @return Country the loaded model
+     * @return User the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($id) {
-        if (($model = Country::findOne($id)) !== null) {
+    protected function findModel($id)
+    {
+        if (($model = User::findOne($id)) !== null) {
             return $model;
         }
 
