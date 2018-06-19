@@ -253,18 +253,32 @@ class UserController extends Controller {
 		$model = new ApiProfile();
 		$apiRequest["ApiProfile"] = Yii::$app->request->post();
 		$model->load($apiRequest);
-		$this->profile->updated_at = time();
-		$this->profile->name = $model->name ?? $this->profile->name ;
-		$this->profile->sex = $model->sex ?? $this->profile->sex;
-		$this->profile->age = $model->age ?? $this->profile->age;
-		$this->profile->phone = $model->phone ?? $this->profile->phone;
-		
-		if($model->sex != 1 && $model->sex != 2) {
-			$this->error_msg = 'Введите 1 или 2 где 1 - мужской, 2 - женский!';
-			return 	$result = [
+		if(isset($model->sex)) {
+			if($model->sex != 1 && $model->sex != 2) {
+				$this->error_msg = 'Введите 1 или 2 где 1 - мужской, 2 - женский!';
+				return 	$result = [
+					"status" => $this->status,
+					"message" => $this->error_msg,
+				];
+			}
+		}
+		if(!$this->profile) {
+			$model->user_id = $this->user->id;
+			$model->created_at = time();
+			$model->updated_at = time();
+			$model->save();
+			$this->status = 1;
+			$this->error_msg = 'Данные профиля добавлены!';
+			return $result = [
 				"status" => $this->status,
 				"message" => $this->error_msg,
 			];
+		} else {
+			$this->profile->updated_at = time();
+			$this->profile->name = $model->name ?? $this->profile->name ;
+			$this->profile->sex = $model->sex ?? $this->profile->sex;
+			$this->profile->age = $model->age ?? $this->profile->age;
+			$this->profile->phone = $model->phone ?? $this->profile->phone;
 		}
 		if (!$this->profile->save()) {
 			return ActiveForm::validate($model);
@@ -275,7 +289,6 @@ class UserController extends Controller {
 			"status" => $this->status,
 			"message" => $this->error_msg,
 		];
-		
 		return $result;
 	}
 }
