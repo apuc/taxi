@@ -16,5 +16,4 @@ use Yii;
  */
 class ApiProfile extends Profile
 {
-
 }

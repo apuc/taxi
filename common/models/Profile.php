@@ -12,6 +12,10 @@ use Yii;
  * @property string $avatar
  * @property int $created_at
  * @property int $updated_at
+ * @property string $name
+ * @property int $age
+ * @property int $sex
+ * @property string $phone
  */
 class Profile extends \yii\db\ActiveRecord
 {
@@ -29,8 +33,8 @@ class Profile extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['user_id', 'created_at', 'updated_at'], 'integer'],
-            [['avatar'], 'string', 'max' => 255],
+            [['user_id', 'created_at', 'updated_at', 'age', 'sex'], 'integer'],
+            [['avatar', 'name', 'phone'], 'string', 'max' => 255],
         ];
     }
 
@@ -45,6 +49,10 @@ class Profile extends \yii\db\ActiveRecord
             'avatar' => Yii::t('profile', 'Avatar'),
             'created_at' => Yii::t('profile', 'Created At'),
             'updated_at' => Yii::t('profile', 'Updated At'),
+            'name' => Yii::t('profile', 'Name'),
+            'age' => Yii::t('profile', 'Age'),
+            'sex' => Yii::t('profile', 'Sex'),
+            'phone' => Yii::t('profile', 'Phone'),
         ];
     }
 }

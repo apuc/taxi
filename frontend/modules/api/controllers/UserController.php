@@ -21,7 +21,7 @@ class UserController extends Controller {
 	public $status = 0;
 	public $error_msg;
 	public $user;
-	public $token;
+	private $token;
 	public $post;
 	public $profile;
 	
@@ -71,8 +71,9 @@ class UserController extends Controller {
 			if ( is_array( $user ) ) {
 				return $user;
 			}
+			$this->status = 1;
 			return [
-				"status"   => $user->status,
+				"status"   => $this->status,
 				"id"       => $user->id,
 				"username" => $user->username,
 				"email"    => $user->email
@@ -244,6 +245,36 @@ class UserController extends Controller {
 		}
 		$this->status = 1;
 		$result       = [ 'id' => $model->user_id,'message' => 'Аватар добавлен!','status' => $this->status, ];
+		
+		return $result;
+	}
+	
+	public function actionProfile() {
+		$model = new ApiProfile();
+		$apiRequest["ApiProfile"] = Yii::$app->request->post();
+		$model->load($apiRequest);
+		$this->profile->updated_at = time();
+		$this->profile->name = $model->name ?? $this->profile->name ;
+		$this->profile->sex = $model->sex ?? $this->profile->sex;
+		$this->profile->age = $model->age ?? $this->profile->age;
+		$this->profile->phone = $model->phone ?? $this->profile->phone;
+		
+		if($model->sex != 1 && $model->sex != 2) {
+			$this->error_msg = 'Введите 1 или 2 где 1 - мужской, 2 - женский!';
+			return 	$result = [
+				"status" => $this->status,
+				"message" => $this->error_msg,
+			];
+		}
+		if (!$this->profile->save()) {
+			return ActiveForm::validate($model);
+		}
+		$this->status = 1;
+		$this->error_msg = 'Данные профиля сохранены!';
+		$result = [
+			"status" => $this->status,
+			"message" => $this->error_msg,
+		];
 		
 		return $result;
 	}
