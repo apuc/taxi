@@ -14,6 +14,7 @@ use Yii;
  * @property int $car_id
  * @property string $content
  * @property int $dt_add
+ * @property int $city_id
  */
 class Request extends \yii\db\ActiveRecord
 {
@@ -32,7 +33,7 @@ class Request extends \yii\db\ActiveRecord
     {
         return [
             [['user_id', 'car_id', 'dt_add'], 'required'],
-            [['user_id', 'status', 'car_id', 'dt_add'], 'integer'],
+            [['user_id', 'status', 'car_id', 'dt_add', 'city_id'], 'integer'],
             [['content'], 'string'],
             [['type'], 'string', 'max' => 255],
         ];
@@ -51,6 +52,7 @@ class Request extends \yii\db\ActiveRecord
             'car_id' => Yii::t('request', 'Car ID'),
             'content' => Yii::t('request', 'Content'),
             'dt_add' => Yii::t('request', 'Dt Add'),
+            'city_id' => Yii::t('request', 'City ID'),
         ];
     }
 }

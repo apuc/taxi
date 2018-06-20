@@ -35,6 +35,7 @@
 					[ 'label' => 'Debug', 'icon' => 'dashboard', 'url' => [ '/debug' ] ],
 					[ 'label' => 'Автотранс', 'url' => [ '/motor' ] ],
                     [ 'label' => 'Пользователи', 'url' => [ '/users' ] ],
+                    [ 'label' => 'Запросы', 'url' => [ '/request' ] ],
 					[
 						'label' => "Местоположение",
 						'url'   => [ "#" ],
