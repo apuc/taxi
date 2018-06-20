@@ -30,6 +30,7 @@ class UserController extends Controller {
 			$this->post = Yii::$app->request->post();
 			\Yii::$app->response->format = Response::FORMAT_JSON;
 			$this->layout                = false;
+			header('Access-Control-Allow-Origin: *');
 			if( $action->id != 'login' && $action->id != 'add' ){
 				if ( $this->isToken() ) {
 					$this->token = $this->isToken();
@@ -157,7 +158,6 @@ class UserController extends Controller {
 			$this->error_msg = 'Ошибка токена!';
 			$result = [ 'status' => $this->status, 'error_msg' => $this->error_msg ];
 		}
-        header('Access-Control-Allow-Origin: *');
         return $result;
 	}
 	
