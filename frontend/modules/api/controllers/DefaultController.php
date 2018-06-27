@@ -13,6 +13,8 @@ use yii\web\Response;
  */
 class DefaultController extends Controller {
 
+	protected $user;
+
     public function behaviors() {
         return array_merge(parent::behaviors(), [
 
@@ -40,7 +42,9 @@ class DefaultController extends Controller {
 	 */
 	public function beforeAction( $action ) {
 		if ( \Yii::$app->request->isPost ) {
-			if ( $this->isToken() ) {
+			$this->user = $this->isToken();
+			if ( $this->user ) {
+
 				\Yii::$app->response->format = Response::FORMAT_JSON;
 				$this->layout                = false;
 

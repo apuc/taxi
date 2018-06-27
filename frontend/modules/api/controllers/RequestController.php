@@ -57,6 +57,7 @@ class RequestController extends DefaultController {
         $model = new ApiRequest();
 
         $model->load($apiRequest);
+        $model->user_id = $this->user->id;
         $model->dt_add = time();
 
         if (!$model->save()) {
@@ -94,7 +95,7 @@ class RequestController extends DefaultController {
 
     }
 
-    public function actionEdit() {
+    public function actionGet() {
         $id = Yii::$app->request->post()["id"];
         $model = ApiRequest::findOne($id);
 
@@ -110,6 +111,36 @@ class RequestController extends DefaultController {
         return $model->toArray();
     }
 
+    public function actionUpdate(){
+	    $id = Yii::$app->request->post()["id"];
+	    $model = ApiRequest::findOne($id);
+	    $apiRequest["ApiRequest"] = Yii::$app->request->post();
+	    $model->load($apiRequest);
+
+
+	    if (is_null($model)) {
+		    $result = [
+			    "status" => Constants::STATUS_DISABLED,
+			    "value" => "Заявка не найдена"
+		    ];
+
+		    return $result;
+	    }
+
+
+	    if (!$model->update()){
+		    return ActiveForm::validate($model);
+	    }
+
+	    $result = [
+		    "status" => Constants::STATUS_ENABLED,
+		    "value" => "Заявка обновлена"
+	    ];
+
+	    return $result;
+
+    }
+
     public function actionGetLists() {
         $modelPost = new ApiRequest();
 
@@ -117,6 +148,7 @@ class RequestController extends DefaultController {
 
 
         $modelPost->load($apiRequest);
+        $modelPost->user_id = $this->user->id;
         $models = ApiRequest::find()->where(["user_id" => $modelPost->user_id])->limit($modelPost->limit)->offset($modelPost->offset)->asArray()->all();
 
         return $models;

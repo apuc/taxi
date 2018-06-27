@@ -32,7 +32,7 @@ class Request extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['user_id', 'car_id', 'dt_add'], 'required'],
+            [['type'] , 'required'],
             [['user_id', 'status', 'car_id', 'dt_add', 'city_id'], 'integer'],
             [['content'], 'string'],
             [['type'], 'string', 'max' => 255],
