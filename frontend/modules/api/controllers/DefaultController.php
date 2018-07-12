@@ -42,6 +42,7 @@ class DefaultController extends Controller {
 	 */
 	public function beforeAction( $action ) {
 		if ( \Yii::$app->request->isPost ) {
+			header('Access-Control-Allow-Origin: *');
 			$this->user = $this->isToken();
 			if ( $this->user ) {
 
