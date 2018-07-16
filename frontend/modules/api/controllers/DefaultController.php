@@ -2,6 +2,7 @@
 
 namespace frontend\modules\api\controllers;
 
+use common\helpers\Constants;
 use common\models\Token;
 use Yii;
 use yii\web\Controller;
@@ -79,6 +80,14 @@ class DefaultController extends Controller {
 		}
 
 		return false;
-
+	}
+	
+	protected function getResult($message, $status = Constants::STATUS_ENABLED){
+		$result = [
+			"status" => $status,
+			"value" => $message
+		];
+		
+		return $result;
 	}
 }

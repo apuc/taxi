@@ -29,6 +29,8 @@ class Country extends \yii\db\ActiveRecord
     {
         return [
             [['name'], 'string', 'max' => 255],
+            [["name"], "unique", "message" => 'Такая страна уже существует'],
+            [["name"], "required", "message" => 'Это поле обязательно']
         ];
     }
 
