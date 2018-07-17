@@ -123,7 +123,7 @@ class MotorTransportController extends DefaultController {
             $models = ApiMotorTransport::find()->limit($modelPost->limit)->offset($modelPost->offset)
                 ->asArray()->all();
         } else {
-            $models = ApiMotorTransport::find()->where(['user_id'=> (int)$modelPost->country_id])
+            $models = ApiMotorTransport::find()->where(['user_id'=> (int)$modelPost->user_id])
                 ->limit($modelPost->limit)->offset($modelPost->offset)
                 ->asArray()->all();
         }
