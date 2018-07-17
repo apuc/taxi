@@ -9,6 +9,7 @@
 namespace frontend\modules\api\controllers;
 
 
+use common\helpers\Constants;
 use common\models\Country;
 use frontend\modules\api\models\ApiCountry;
 use Yii;
@@ -55,7 +56,7 @@ class CountryController extends DefaultController {
         $model = ApiCountry::findOne($id);
 
         if (is_null($model)) {
-            return $this->getResult("Страна не найдена!");
+            return $this->getResult("Страна не найдена!", Constants::STATUS_DISABLED);
         }
 
         return $model->toArray();
@@ -68,6 +69,11 @@ class CountryController extends DefaultController {
     public function actionEdit() {
         $id = Yii::$app->request->post()["id"];
         $model = ApiCountry::findOne($id);
+
+        if (is_null($model)) {
+            return $this->getResult("Страна не найдена!", Constants::STATUS_DISABLED);
+        }
+        
         $apiCountry["ApiCountry"] = Yii::$app->request->post();
 
         $model->load($apiCountry);

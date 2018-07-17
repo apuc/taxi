@@ -17,6 +17,30 @@ use Yii;
  */
 class City extends \yii\db\ActiveRecord
 {
+
+    public function behaviors() {
+        return [
+            'slug' => [
+                'class'          => 'skeeks\yii2\slug\SlugBehavior',
+                'slugAttribute'  => 'slug',                      //The attribute to be generated
+                'attribute'      => 'name',                          //The attribute from which will be generated
+                // optional params
+                'maxLength'      => 64,                              //Maximum length of attribute slug
+                'minLength'      => 3,                               //Min length of attribute slug
+                'ensureUnique'   => true,
+                'slugifyOptions' => [
+                    'lowercase' => true,
+                    'separator' => '-',
+                    'trim'      => true
+                    //'regexp' => '/([^A-Za-z0-9]|-)+/',
+                    //'rulesets' => ['russian'],
+                    //@see all options https://github.com/cocur/slugify
+                ]
+            ]
+        ];
+    }
+
+
     /**
      * {@inheritdoc}
      */
@@ -33,6 +57,7 @@ class City extends \yii\db\ActiveRecord
         return [
             [['dt_add', 'country_id'], 'integer'],
             [['name', 'slug'], 'string', 'max' => 255],
+            [["name"], "required", "message" => "Это поле обязательно"],
             [['country_id'], 'exist', 'skipOnError' => true, 'targetClass' => Country::className(), 'targetAttribute' => ['country_id' => 'id']],
         ];
     }

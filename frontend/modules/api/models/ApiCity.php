@@ -12,9 +12,14 @@ use common\models\City;
 
 class ApiCity extends City {
 
+    //для пагинации
+    public $offset;
+    public $limit;
+    
     public function rules() {
         $rules = parent::rules();
-
+        $rules[] = [ [ "offset", "limit" ], "integer" ];
+        $rules[] = [ [ "offset", "limit" ], "default", "value"=>2];
         return $rules;
     }
 

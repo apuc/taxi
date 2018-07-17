@@ -15,9 +15,15 @@ use Yii;
 use yii\widgets\ActiveForm;
 
 
-class CityController extends DefaultController {
+class CityController extends DefaultController
+{
 
-    public function actionAdd() {
+    /**
+     * принимает поля name, country_id, slug
+     * @return array
+     */
+    public function actionAdd()
+    {
         $model = new ApiCity();
 
         $apiCity["ApiCity"] = Yii::$app->request->post();
@@ -29,19 +35,52 @@ class CityController extends DefaultController {
             return ActiveForm::validate($model);
         }
 
-        return "Успешно добавлен";
+        return $this->getResult("Город успешно добавлен!");
     }
 
-    public function actionDel() {
-        $id = Yii::$app->request->post()["id"];
-        ApiCity::deleteAll($id);
-
-        return "Заявка удалена";
-    }
-
-    public function actionEdit() {
+    /**
+     * принимает id
+     * @return string
+     */
+    public function actionDelete()
+    {
         $id = Yii::$app->request->post()["id"];
         $model = ApiCity::findOne($id);
+        if (!is_null($model)) {
+            $model->delete();
+        }
+        return $this->getResult("Город успешно удален!");
+    }
+
+    /**
+     * принимает поле id
+     * @return array
+     */
+    public function actionGet()
+    {
+        $id = Yii::$app->request->post()["id"];
+        $model = ApiCity::findOne($id);
+
+        if (is_null($model)) {
+            return $this->getResult("Город не найден!", Constants::STATUS_DISABLED);
+        }
+
+        return $model->toArray();
+    }
+
+
+    /**
+     * принимает поле name, country_id, slug
+     * @return array
+     */
+    public function actionEdit()
+    {
+        $id = Yii::$app->request->post()["id"];
+        $model = ApiCity::findOne($id);
+
+        if (is_null($model)) {
+            return $this->getResult("Город не найден!", Constants::STATUS_DISABLED);
+        }
 
         $apiCity["ApiCity"] = Yii::$app->request->post();
 
@@ -55,14 +94,31 @@ class CityController extends DefaultController {
         return $model->toArray();
     }
 
-    public function actionGetLists() {
+    /**
+     * принимает поля country_id, limit, offset
+     * @return array|\yii\db\ActiveRecord[]
+     */
+    public function actionGetLists()
+    {
+
         $modelPost = new ApiCity();
 
-        $apiCity["ApiCity"] = Yii::$app->request->post();
+        $apiCountry["ApiCity"] = Yii::$app->request->post();
 
-        $modelPost->load($apiCity);
-        $models = ApiCity::find()->where(['country_id' => $modelPost->country_id])->asArray()->all();
+        $modelPost->load($apiCountry);
 
+        $modelPost->validate();
+
+        if (is_null($modelPost->country_id)) {
+            $models = ApiCity::find()->limit($modelPost->limit)->offset($modelPost->offset)
+                ->asArray()->all();
+        } else {
+//var_dump($modelPost->country_id);die;
+            $models = ApiCity::find()->where(['country_id'=> (int)$modelPost->country_id])
+                ->limit($modelPost->limit)->offset($modelPost->offset)
+                ->asArray()->all();
+        }
+        
         return $models;
     }
 }

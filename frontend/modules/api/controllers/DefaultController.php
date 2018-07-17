@@ -12,11 +12,13 @@ use yii\web\Response;
 /**
  * Default controller for the `api` module
  */
-class DefaultController extends Controller {
+class DefaultController extends Controller
+{
 
-	protected $user;
+    protected $user;
 
-    public function behaviors() {
+    public function behaviors()
+    {
         return array_merge(parent::behaviors(), [
 
             // For cross-domain AJAX request
@@ -34,60 +36,64 @@ class DefaultController extends Controller {
         ]);
     }
 
-	/**
-	 * @param \yii\base\Action $action
-	 *
-	 * @return bool|string
-	 * @throws \yii\web\BadRequestHttpException
-	 * @throws NotFoundHttpException
-	 */
-	public function beforeAction( $action ) {
-		if ( \Yii::$app->request->isPost ) {
-			header('Access-Control-Allow-Origin: *');
-			$this->user = $this->isToken();
-			if ( $this->user ) {
+    /**
+     * @param \yii\base\Action $action
+     *
+     * @return bool|string
+     * @throws \yii\web\BadRequestHttpException
+     * @throws NotFoundHttpException
+     */
+    public function beforeAction($action)
+    {
+        if (\Yii::$app->request->isPost) {
+            header('Access-Control-Allow-Origin: *');
+            $this->user = $this->isToken();
+            if ($this->user) {
 
-				\Yii::$app->response->format = Response::FORMAT_JSON;
-				$this->layout                = false;
+                \Yii::$app->response->format = Response::FORMAT_JSON;
+                $this->layout = false;
 
-				return true;
-			} else {
-				throw  new NotFoundHttpException( 'Страница не найдена', 404 );
-			}
-
-
-		} else {
-			throw  new NotFoundHttpException( 'Страница не найдена', 404 );
-		}
-	}
+                return true;
+            } else {
+                throw  new NotFoundHttpException('Страница не найдена', 404);
+            }
 
 
-	/**
-	 * Renders the index view for the module
-	 * @return string
-	 */
-	public function actionIndex() {
-		return $this->render( 'index' );
-	}
+        } else {
+            throw  new NotFoundHttpException('Страница не найдена', 404);
+        }
+    }
 
-	/**
-	 * проверка токена
-	 * @return bool|null|static
-	 */
-	private function isToken() {
-		if (isset(Yii::$app->request->post()["token"])){
-			return Token::findOne( [ "token" => Yii::$app->request->post()["token"] ] );
-		}
 
-		return false;
-	}
-	
-	protected function getResult($message, $status = Constants::STATUS_ENABLED){
-		$result = [
-			"status" => $status,
-			"value" => $message
-		];
-		
-		return $result;
-	}
+    /**
+     * Renders the index view for the module
+     * @return string
+     */
+    public function actionIndex()
+    {
+        return $this->render('index');
+    }
+
+    /**
+     * проверка токена
+     * @return bool|null|static
+     */
+    private function isToken()
+    {
+        if (isset(Yii::$app->request->post()["token"])) {
+            return Token::findOne(["token" => Yii::$app->request->post()["token"]]);
+        }
+
+        return false;
+    }
+
+    protected function getResult($message, $status = Constants::STATUS_ENABLED)
+    {
+        $result = [
+            "status" => $status,
+            "value" => $message
+        ];
+
+        return $result;
+    }
 }
