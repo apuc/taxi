@@ -53,23 +53,42 @@ class MotorTransportController extends DefaultController {
             return ActiveForm::validate($model);
         }
 
-        return "Успешно добавлен";
+        return $this->getResult("Транспорт успешно добавлен");
     }
 
-    public function actionDel() {
+    public function actionDelete() {
         $id = Yii::$app->request->post()["id"];
-        ApiMotorTransport::deleteAll(['id' => $id]);
-
-        return "Заявка удалена";
+        $model = ApiMotorTransport::findOne($id);
+        if (!is_null($model)) {
+            $model->delete();
+        }
+        return $this->getResult("Транспорт успешно удален!");
     }
+
+    public function actionGet()
+    {
+        $id = Yii::$app->request->post()["id"];
+        $model = ApiMotorTransport::findOne($id);
+
+        if (is_null($model)) {
+            return $this->getResult("Транспорт не найден!", Constants::STATUS_DISABLED);
+        }
+
+        return $model->toArray();
+    }
+
 
     public function actionEdit() {
         $id = Yii::$app->request->post()["id"];
         $model = ApiMotorTransport::findOne($id);
 
+        if (is_null($model)) {
+            return $this->getResult("Транспорт не найден!", Constants::STATUS_DISABLED);
+        }
+
         $apiMotor["ApiMotorTransport"] = Yii::$app->request->post();
 
-        if(Yii::$app->request->post()['photo']){
+        if(isset(Yii::$app->request->post()['photo'])){
             //var_dump(Yii::$app->request->post()['photo']);die();
             $path = Yii::getAlias('@frontend/web' . $model->photo);
             if($model->photo)
@@ -84,7 +103,7 @@ class MotorTransportController extends DefaultController {
         $model->dt_add = time();
 
         if (!$model->save()) {
-            return 'Ошибка редактирования';
+            return ActiveForm::validate($model);
         }
 
         return $model->toArray();
@@ -96,7 +115,18 @@ class MotorTransportController extends DefaultController {
         $apiMotor["ApiMotorTransport"] = Yii::$app->request->post();
 
         $modelPost->load($apiMotor);
-        $models = ApiMotorTransport::find()->where(['user_id' => $modelPost->user_id])->asArray()->all();
+        $modelPost->validate();
+//        $models = ApiMotorTransport::find()->where(['user_id' => $modelPost->user_id])->asArray()->all();
+
+
+        if (is_null($modelPost->user_id)) {
+            $models = ApiMotorTransport::find()->limit($modelPost->limit)->offset($modelPost->offset)
+                ->asArray()->all();
+        } else {
+            $models = ApiMotorTransport::find()->where(['user_id'=> (int)$modelPost->country_id])
+                ->limit($modelPost->limit)->offset($modelPost->offset)
+                ->asArray()->all();
+        }
 
         return $models;
     }

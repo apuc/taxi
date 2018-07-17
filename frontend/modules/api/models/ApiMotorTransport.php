@@ -13,10 +13,12 @@ use common\models\MotorTransport;
 
 class ApiMotorTransport extends MotorTransport {
 
-
+    public $offset;
+    public $limit;
     public function rules() {
         $rules = parent::rules();
-
+        $rules[] = [ [ "offset", "limit" ], "integer" ];
+        $rules[] = [ [ "offset", "limit" ], "default", "value"=>2];
         return $rules;
     }
 }
