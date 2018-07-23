@@ -102,7 +102,7 @@ class UserController extends Controller {
 				$token->save();
 				$this->status = 1;
 
-				return [ 'status' => $this->status, 'token' => $token->token ];
+				return [ 'status' => $this->status, 'token' => $token->token, "user_id"=>$user->id ];
 			} else {
 				$this->error_msg = 'Неверно введены данные!';
 
