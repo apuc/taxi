@@ -3,6 +3,7 @@
 namespace frontend\modules\api\controllers;
 
 use common\helpers\Constants;
+use common\models\OptionSettings;
 use common\models\Request;
 use common\models\Token;
 use frontend\modules\api\models\AddRequest;
@@ -16,13 +17,15 @@ use yii\web\NotFoundHttpException;
 use yii\web\Response;
 use yii\widgets\ActiveForm;
 
-class RequestController extends DefaultController {
+class RequestController extends DefaultController
+{
 
     /**
      * экшн с тестовыми данными для проверки работы пост запросов
      * @return string
      */
-    public function actionIndex() {
+    public function actionIndex()
+    {
         $user = (\Yii::$app->user->identity) ? \Yii::$app->user->identity->getId() : null;
         $token = Token::findOne(["user_id" => $user]);
 
@@ -51,24 +54,28 @@ class RequestController extends DefaultController {
     }
 
 
-    public function actionAdd() {
+    public function actionAdd()
+    {
         $apiRequest["ApiRequest"] = Yii::$app->request->post();
-
         $model = new ApiRequest();
 
         $model->load($apiRequest);
         $model->user_id = $this->user->id;
         $model->dt_add = time();
-
         if (!$model->save()) {
             return ActiveForm::validate($model);
         }
 
-        $result = [
-            "status" => Constants::STATUS_ENABLED,
-            "value" => "Заявка успешно обработана"
-        ];
 
+        if (isset(Yii::$app->request->post()["settings"])) {
+            $model->settings = Yii::$app->request->post()["settings"];
+            $optionSettings = new OptionSettings();
+            $optionSettings->table_name = $model->tableName();
+            $optionSettings->table_row = $model->id;
+            $optionSettings->value = json_encode( Yii::$app->request->post()["settings"]);
+            $optionSettings->save();
+        }
+        $result = $this->getResult("Заявка успешно обработана");
         return $result;
     }
 
@@ -78,7 +85,8 @@ class RequestController extends DefaultController {
      * @throws \Throwable
      * @throws \yii\db\StaleObjectException
      */
-    public function actionDelete() {
+    public function actionDelete()
+    {
         $id = Yii::$app->request->post()["id"];
         $model = ApiRequest::findOne($id);
         if (!is_null($model)) {
@@ -95,9 +103,36 @@ class RequestController extends DefaultController {
 
     }
 
-    public function actionGet() {
+    public function actionGet()
+    {
         $id = Yii::$app->request->post()["id"];
         $model = ApiRequest::findOne($id);
+
+        if (is_null($model)) {
+
+            return $this->getResult("Заявка не найдена", Constants::STATUS_DISABLED);
+        }
+
+        $data = [];
+
+        $settings = $this->getOptionSettings($model->tableName(), $model->id);
+
+        foreach ($settings as $item){
+            $data["settings"] = json_decode($item->value);
+        }
+
+        $data["model"] = $model->toArray();
+
+        return $data;
+    }
+
+    public function actionUpdate()
+    {
+        $id = Yii::$app->request->post()["id"];
+        $model = ApiRequest::findOne($id);
+        $apiRequest["ApiRequest"] = Yii::$app->request->post();
+        $model->load($apiRequest);
+
 
         if (is_null($model)) {
             $result = [
@@ -108,51 +143,37 @@ class RequestController extends DefaultController {
             return $result;
         }
 
-        return $model->toArray();
-    }
 
-    public function actionUpdate(){
-	    $id = Yii::$app->request->post()["id"];
-	    $model = ApiRequest::findOne($id);
-	    $apiRequest["ApiRequest"] = Yii::$app->request->post();
-	    $model->load($apiRequest);
+        if (!$model->update()) {
+            return ActiveForm::validate($model);
+        }
 
+        $result = [
+            "status" => Constants::STATUS_ENABLED,
+            "value" => "Заявка обновлена"
+        ];
 
-	    if (is_null($model)) {
-		    $result = [
-			    "status" => Constants::STATUS_DISABLED,
-			    "value" => "Заявка не найдена"
-		    ];
-
-		    return $result;
-	    }
-
-
-	    if (!$model->update()){
-		    return ActiveForm::validate($model);
-	    }
-
-	    $result = [
-		    "status" => Constants::STATUS_ENABLED,
-		    "value" => "Заявка обновлена"
-	    ];
-
-	    return $result;
+        return $result;
 
     }
 
-    public function actionGetLists() {
+    public function actionGetLists()
+    {
         $modelPost = new ApiRequest();
 
         $apiRequest["ApiRequest"] = Yii::$app->request->post();
-
-
         $modelPost->load($apiRequest);
         $modelPost->user_id = $this->user->id;
         $models = ApiRequest::find()->where(["user_id" => $modelPost->user_id])->limit($modelPost->limit)->offset($modelPost->offset)->asArray()->all();
 
         return $models;
 
+    }
+
+
+    public function actionOptionValue()
+    {
+        return $this->getOptionSettings("request");
     }
 
 }

@@ -23,6 +23,7 @@ class ApiRequest extends Request {
 	//для пагинации
 	public $offset;
 	public $limit;
+	public $settings;
 
 
 	public function rules() {

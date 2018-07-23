@@ -35,6 +35,7 @@ class Request extends \yii\db\ActiveRecord
             [['type'] , 'required'],
             [['user_id', 'status', 'car_id', 'dt_add', 'city_id'], 'integer'],
             [['content'], 'string'],
+            [["car_id"], "default", "value"=>0],
             [['type'], 'string', 'max' => 255],
         ];
     }
