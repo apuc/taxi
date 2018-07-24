@@ -203,7 +203,7 @@ class UserController extends Controller {
 	}
 	
 	private function SaveImg($img) {
-		$dir = '/media/upload/' . Yii::$app->request->post()["user_id"] . '/' . date('Y-m-d') . '/';
+		$dir = '/media/upload/' . $this->user->id . '/' . date('Y-m-d') . '/';
 		$path = Yii::getAlias('@frontend/web' . $dir);
 		$folderCreate = new Folder($path, 0775);
 		$folderCreate->create();
@@ -220,7 +220,9 @@ class UserController extends Controller {
 	
 	public function actionAvatar() {
 		if($this->profile) {
-			unlink($this->profile->avatar);
+            if (file_exists($this->profile->avatar)){
+                unlink($this->profile->avatar);
+            }
 			$this->profile->avatar = $this->SaveImg($this->post['avatar']);
 			$this->profile->updated_at = time();
 			if(!$this->profile->save()) {
