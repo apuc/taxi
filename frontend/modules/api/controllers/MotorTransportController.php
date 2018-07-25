@@ -10,6 +10,7 @@ namespace frontend\modules\api\controllers;
 
 use common\helpers\Constants;
 use common\helpers\Folder;
+use common\models\OptionSettings;
 use frontend\modules\api\models\ApiMotorTransport;
 use Yii;
 use yii\widgets\ActiveForm;
@@ -40,17 +41,22 @@ class MotorTransportController extends DefaultController {
 
     public function actionAdd() {
         $model = new ApiMotorTransport();
-
         $apiMotor["ApiMotorTransport"] = Yii::$app->request->post();
 
         $model->load($apiMotor);
         if ($model->photo)
             $model->photo = $this->SaveImg($model->photo);
+        $model->user_id = $this->user->id;
         $model->status = Constants::STATUS_ENABLED;
         $model->dt_add = time();
 
         if (!$model->save()) {
             return ActiveForm::validate($model);
+        }
+
+        if (isset(Yii::$app->request->post()["settings"])) {
+            $model->settings = Yii::$app->request->post()["settings"];
+            $this->saveOptionSettings($model);
         }
 
         return $this->getResult("Транспорт успешно добавлен");
@@ -61,6 +67,7 @@ class MotorTransportController extends DefaultController {
         $model = ApiMotorTransport::findOne($id);
         if (!is_null($model)) {
             $model->delete();
+            OptionSettings::findOne(["table_row"=>$model->id])->delete();
         }
         return $this->getResult("Транспорт успешно удален!");
     }
@@ -73,8 +80,17 @@ class MotorTransportController extends DefaultController {
         if (is_null($model)) {
             return $this->getResult("Транспорт не найден!", Constants::STATUS_DISABLED);
         }
+        $data = [];
 
-        return $model->toArray();
+        $settings = $this->getOptionSettings($model->tableName(), $model->id);
+
+        foreach ($settings as $item) {
+            $data["settings"] = json_decode($item->value);
+        }
+
+        $data["model"] = $model->toArray();
+
+        return $data;
     }
 
 
@@ -106,7 +122,12 @@ class MotorTransportController extends DefaultController {
             return ActiveForm::validate($model);
         }
 
-        return $model->toArray();
+        if (isset(Yii::$app->request->post()["settings"])) {
+            $model->settings = Yii::$app->request->post()["settings"];
+            $this->saveOptionSettings($model);
+        }
+
+        return $this->getResult("Мототранспорт обновлен");
     }
 
     public function actionGetLists() {
@@ -129,6 +150,10 @@ class MotorTransportController extends DefaultController {
         }
 
         return $models;
+    }
+
+    public function actionOption(){
+        return $this->getOptionSettingsValue("motor_transport");
     }
 
 

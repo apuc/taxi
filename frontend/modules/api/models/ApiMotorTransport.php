@@ -15,6 +15,7 @@ class ApiMotorTransport extends MotorTransport {
 
     public $offset;
     public $limit;
+    public $settings;
     public function rules() {
         $rules = parent::rules();
         $rules[] = [ [ "offset", "limit" ], "integer" ];

@@ -55,7 +55,6 @@ class MotorTransport extends ActiveRecord
             'photo' => Yii::t('request', 'Photo'),
             'status' => Yii::t('request', 'Status'),
             'dt_add' => Yii::t('request', 'Dt Add'),
-            'dt_add' => Yii::t('request', 'Dt Add'),
         ];
     }
 }

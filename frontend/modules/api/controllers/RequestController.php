@@ -58,22 +58,15 @@ class RequestController extends DefaultController
     {
         $apiRequest["ApiRequest"] = Yii::$app->request->post();
         $model = new ApiRequest();
-
         $model->load($apiRequest);
         $model->user_id = $this->user->id;
         $model->dt_add = time();
         if (!$model->save()) {
             return ActiveForm::validate($model);
         }
-
-
         if (isset(Yii::$app->request->post()["settings"])) {
             $model->settings = Yii::$app->request->post()["settings"];
-            $optionSettings = new OptionSettings();
-            $optionSettings->table_name = $model->tableName();
-            $optionSettings->table_row = $model->id;
-            $optionSettings->value = json_encode( Yii::$app->request->post()["settings"]);
-            $optionSettings->save();
+            $this->saveOptionSettings($model);
         }
         $result = $this->getResult("Заявка успешно обработана");
         return $result;
@@ -91,14 +84,10 @@ class RequestController extends DefaultController
         $model = ApiRequest::findOne($id);
         if (!is_null($model)) {
             $model->delete();
+            OptionSettings::findOne(["table_row"=>$model->id])->delete();
         }
 
-        $result = [
-            "status" => Constants::STATUS_ENABLED,
-            "value" => "Заявка удалена"
-        ];
-
-        return $result;
+        return $this->getResult("Заявка удалена");
 
 
     }
@@ -117,7 +106,7 @@ class RequestController extends DefaultController
 
         $settings = $this->getOptionSettings($model->tableName(), $model->id);
 
-        foreach ($settings as $item){
+        foreach ($settings as $item) {
             $data["settings"] = json_decode($item->value);
         }
 
@@ -126,7 +115,7 @@ class RequestController extends DefaultController
         return $data;
     }
 
-    public function actionUpdate()
+    public function actionEdit()
     {
         $id = Yii::$app->request->post()["id"];
         $model = ApiRequest::findOne($id);
@@ -142,18 +131,17 @@ class RequestController extends DefaultController
 
             return $result;
         }
-
-
+        
         if (!$model->update()) {
             return ActiveForm::validate($model);
         }
 
-        $result = [
-            "status" => Constants::STATUS_ENABLED,
-            "value" => "Заявка обновлена"
-        ];
+        if (isset(Yii::$app->request->post()["settings"])) {
+            $model->settings = Yii::$app->request->post()["settings"];
+            $this->saveOptionSettings($model);
+        }
 
-        return $result;
+        return $this->getResult("Заявка обновлена");
 
     }
 
@@ -170,10 +158,7 @@ class RequestController extends DefaultController
 
     }
 
-
-    public function actionOptionValue()
-    {
-        return $this->getOptionSettings("request");
+    public function actionOption(){
+        return $this->getOptionSettingsValue("request");
     }
-
 }

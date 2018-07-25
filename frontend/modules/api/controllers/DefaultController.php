@@ -6,6 +6,7 @@ use common\helpers\Constants;
 use common\models\OptionSettings;
 use common\models\OptionsSettingsValue;
 use common\models\Token;
+use common\models\User;
 use Yii;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -54,8 +55,11 @@ class DefaultController extends Controller
                 $this->layout = false;
                 return true;
             }
-            $this->user = $this->isToken();
-            if ($this->user) {
+            $token = $this->isToken();
+
+            if ($token) {
+
+                $this->user = User::findOne($token->user_id);
 
                 \Yii::$app->response->format = Response::FORMAT_JSON;
                 $this->layout = false;
@@ -117,9 +121,15 @@ class DefaultController extends Controller
             ->where(["table_name" => $tableName, "table_row" => $tableRow])
             ->limit($limit)->offset($offset)->all();
     }
-
-    protected function addOptionSettings()
-    {
-
+    
+    protected function saveOptionSettings($model){
+        $optionSettings = OptionSettings::findOne(["table_row"=>$model->id]);
+        if (is_null($optionSettings)) {
+            $optionSettings = new OptionSettings();
+            $optionSettings->table_name = $model->tableName();
+            $optionSettings->table_row = $model->id;
+        }
+        $optionSettings->value = json_encode($model->settings);
+        $optionSettings->save();
     }
 }
