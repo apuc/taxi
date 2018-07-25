@@ -15,6 +15,8 @@ use Yii;
  * @property string $content
  * @property int $dt_add
  * @property int $city_id
+ * @property int $parent_id
+ * @property int $is_answer
  */
 class Request extends \yii\db\ActiveRecord
 {
@@ -32,10 +34,9 @@ class Request extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['type'] , 'required'],
-            [['user_id', 'status', 'car_id', 'dt_add', 'city_id'], 'integer'],
+            [['user_id', 'dt_add'], 'required'],
+            [['user_id', 'status', 'car_id', 'dt_add', 'city_id', 'parent_id', 'is_answer'], 'integer'],
             [['content'], 'string'],
-            [["car_id"], "default", "value"=>0],
             [['type'], 'string', 'max' => 255],
         ];
     }

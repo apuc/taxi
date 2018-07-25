@@ -61,6 +61,7 @@ class RequestController extends DefaultController
         $model->load($apiRequest);
         $model->user_id = $this->user->id;
         $model->dt_add = time();
+        if ((int)$model->is_answer === Constants::STATUS_DISABLED) $model->parent_id = null;
         if (!$model->save()) {
             return ActiveForm::validate($model);
         }
@@ -84,7 +85,7 @@ class RequestController extends DefaultController
         $model = ApiRequest::findOne($id);
         if (!is_null($model)) {
             $model->delete();
-            OptionSettings::findOne(["table_row"=>$model->id])->delete();
+            OptionSettings::findOne(["table_row" => $model->id])->delete();
         }
 
         return $this->getResult("Заявка удалена");
@@ -131,7 +132,7 @@ class RequestController extends DefaultController
 
             return $result;
         }
-        
+
         if (!$model->update()) {
             return ActiveForm::validate($model);
         }
@@ -158,7 +159,8 @@ class RequestController extends DefaultController
 
     }
 
-    public function actionOption(){
+    public function actionOption()
+    {
         return $this->getOptionSettingsValue("request");
     }
 }
