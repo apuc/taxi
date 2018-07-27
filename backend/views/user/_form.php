@@ -1,5 +1,6 @@
 <?php
 
+use backend\models\User;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
@@ -14,27 +15,22 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'username')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'auth_key')->textInput(['maxlength' => true]) ?>
-
-    <!--<?= $form->field($model, 'password_hash')->textInput(['maxlength' => true]) ?>-->
-
-    <!--<?= $form->field($model, 'password_reset_token')->textInput(['maxlength' => true]) ?>-->
-
     <?= $form->field($model, 'email')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'status')->textInput() ?>
+    <?= $form->field($model, 'status')->dropDownList(
+        [
+            User::STATUS_ACTIVE => "Активен",
+            User::STATUS_DELETED => "Не активен"
+        ]
+    ) ?>
 
-    <!--<?= $form->field($model, 'created_at')->textInput() ?>-->
-
-    <!--<?= $form->field($model, 'updated_at')->textInput() ?>-->
-
-    <?= $form->field($model, 'country_id')->dropDownList(
-        \yii\helpers\ArrayHelper::map(\common\models\Country::find()->all(), "id", "name"),
-        ["prompt"=>""]
+    <?= $form->field($model, 'city_id')->dropDownList(
+        \yii\helpers\ArrayHelper::map(\common\models\City::find()->all(), "id", "name"),
+        ["prompt" => ""]
     ) ?>
 
     <div class="form-group">
-        <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>
+        <?= Html::submitButton('Сохранить', ['class' => 'btn btn-success']) ?>
     </div>
 
     <?php ActiveForm::end(); ?>

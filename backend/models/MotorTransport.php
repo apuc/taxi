@@ -19,9 +19,14 @@ use Yii;
  */
 class MotorTransport extends \common\models\MotorTransport
 {
-    public function rules() {
+
+    public $file;
+
+    public function rules()
+    {
         $rules = parent::rules();
-        $rules[] =  [['user_id', 'brand', 'model', 'year'], 'required', "message"=>"Обязательное поле"];
+        $rules[] = [['user_id', 'brand', 'model', 'year'], 'required', "message" => "Обязательное поле"];
+        $rules[] = [["file"], "file"];
         return $rules;
     }
 
@@ -43,7 +48,8 @@ class MotorTransport extends \common\models\MotorTransport
         ];
     }
 
-    public function getUser(){
+    public function getUser()
+    {
         return $this->hasOne(User::className(), ['id' => 'user_id']);
     }
 

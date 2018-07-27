@@ -18,7 +18,7 @@ use yii\widgets\ActiveForm;
 class MotorTransportController extends DefaultController {
 
     private function SaveImg($img) {
-        $dir = '/media/upload/' . Yii::$app->request->post()["user_id"] . '/' . date('Y-m-d') . '/';
+        $dir = '/media/upload/' . $this->user->id . '/' . date('Y-m-d') . '/';
         $path = Yii::getAlias('@frontend/web' . $dir);
         $folderCreate = new Folder($path, 0775);
         $folderCreate->create();

@@ -4,11 +4,14 @@ namespace backend\controllers;
 
 use backend\models\MotorTransport;
 use backend\models\User;
+use common\helpers\Constants;
 use Yii;
 use backend\models\MotorTransportSearch;
+use yii\helpers\FileHelper;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\web\UploadedFile;
 
 /**
  * MotorTransportController implements the CRUD actions for MotorTransport model.
@@ -42,7 +45,6 @@ class MotorTransportController extends Controller
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
 
-
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
@@ -71,9 +73,15 @@ class MotorTransportController extends Controller
     public function actionCreate()
     {
         $model = new MotorTransport();
-
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+        if (Yii::$app->request->isPost) {
+            $model->load(Yii::$app->request->post());
+            $model->user_id = Yii::$app->user->id;
+            $model->status = Constants::STATUS_ENABLED;
+            $model->dt_add = time();
+            $this->saveImage($model);
+            if ($model->save()) {
+                return $this->redirect(['view', 'id' => $model->id]);
+            }
         }
 
         return $this->render('create', [
@@ -90,10 +98,14 @@ class MotorTransportController extends Controller
      */
     public function actionUpdate($id)
     {
-        $model = $this->findModel($id);
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+        $model = $this->findModel($id);
+        if (Yii::$app->request->isPost) {
+            $model->load(Yii::$app->request->post());
+            $this->saveImage($model);
+            if ($model->save()) {
+                return $this->redirect(['view', 'id' => $model->id]);
+            }
         }
 
         return $this->render('update', [
@@ -129,5 +141,24 @@ class MotorTransportController extends Controller
         }
 
         throw new NotFoundHttpException('The requested page does not exist.');
+    }
+
+    private function saveImage(MotorTransport $model)
+    {
+
+        $dir = '/media/upload/' . Yii::$app->user->id . '/' . date('Y-m-d') . '/';
+        $path = Yii::getAlias('@frontend/web' . $dir);
+        if (!file_exists(Yii::getAlias('@frontend/web') . '/media/upload/' . Yii::$app->user->id . '/' . date('Y-m-d'))) {
+            FileHelper::createDirectory($path);
+        }
+
+        $photo = UploadedFile::getInstance($model, "file");
+
+        if ($photo) {
+            $model->photo = $photo;
+            $imgFile = $path . md5($model->photo->baseName) . "." . $model->photo->extension;
+            $model->photo->saveAs($imgFile);
+            $model->photo = $dir . md5($model->photo->baseName) . "." . $model->photo->extension;
+        }
     }
 }

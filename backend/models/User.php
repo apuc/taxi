@@ -33,15 +33,15 @@ class User extends \common\models\User
     {
         return [
             'id' => 'ID',
-            'username' => 'Username',
+            'username' => 'Пользователь',
             'auth_key' => 'Auth Key',
             'password_hash' => 'Password Hash',
             'password_reset_token' => 'Password Reset Token',
             'email' => 'Email',
-            'status' => 'Status',
-            'created_at' => 'Created At',
-            'updated_at' => 'Updated At',
-            'city_id' => 'City ID',
+            'status' => 'Статус',
+            'created_at' => 'Дата создания',
+            'updated_at' => 'Дата обновления    ',
+            'city_id' => 'Город',
         ];
     }
 }
