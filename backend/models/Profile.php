@@ -11,5 +11,14 @@ namespace backend\models;
 
 class Profile extends \common\models\Profile
 {
+    public $file;
+
+    public function rules()
+    {
+        $rules = parent::rules();
+        $rules[] = [["file"], "file"];
+        return $rules;
+    }
+    
     
 }

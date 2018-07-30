@@ -2,12 +2,15 @@
 
 namespace backend\controllers;
 
+use backend\models\Profile;
 use backend\models\User;
 use backend\models\UserSearch;
 use Yii;
+use yii\helpers\FileHelper;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\web\UploadedFile;
 
 /**
  * UserController implements the CRUD actions for User model.
@@ -54,6 +57,7 @@ class UserController extends Controller
     {
         return $this->render('view', [
             'model' => $this->findModel($id),
+            "profile" => Profile::findOne(["user_id" => $id])
         ]);
     }
 
@@ -67,13 +71,21 @@ class UserController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
+        $profile = Profile::findOne(["user_id" => $id]);
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+        if (Yii::$app->request->isPost) {
+            $model->load(Yii::$app->request->post());
+            $profile->load(Yii::$app->request->post());
+            $this->saveImage($profile);
+            $profile->save();
+            if ($model->save()) {
+                return $this->redirect(['view', 'id' => $model->id]);
+            }
         }
 
         return $this->render('update', [
             'model' => $model,
+            "profile" => $profile
         ]);
     }
 
@@ -105,5 +117,24 @@ class UserController extends Controller
         }
 
         throw new NotFoundHttpException('The requested page does not exist.');
+    }
+
+    private function saveImage($model)
+    {
+
+        $dir = '/media/upload/' . Yii::$app->user->id . '/' . date('Y-m-d') . '/';
+        $path = Yii::getAlias('@frontend/web' . $dir);
+        if (!file_exists(Yii::getAlias('@frontend/web') . '/media/upload/' . Yii::$app->user->id . '/' . date('Y-m-d'))) {
+            FileHelper::createDirectory($path);
+        }
+
+        $photo = UploadedFile::getInstance($model, "file");
+
+        if ($photo) {
+            $model->avatar = $photo;
+            $imgFile = $path . md5($model->avatar->baseName) . "." . $model->avatar->extension;
+            $model->avatar->saveAs($imgFile);
+            $model->avatar = $dir . md5($model->avatar->baseName) . "." . $model->avatar->extension;
+        }
     }
 }

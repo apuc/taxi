@@ -33,7 +33,7 @@ class Profile extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['user_id', 'created_at', 'updated_at', 'age', 'sex'], 'integer'],
+            [['user_id', 'created_at', 'updated_at', 'age', 'sex'], 'integer', "message"=>"Значение должно быть числом"],
             [['avatar', 'name', 'phone'], 'string', 'max' => 255],
         ];
     }
@@ -44,15 +44,15 @@ class Profile extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'id' => Yii::t('profile', 'ID'),
-            'user_id' => Yii::t('profile', 'User ID'),
-            'avatar' => Yii::t('profile', 'Avatar'),
-            'created_at' => Yii::t('profile', 'Created At'),
-            'updated_at' => Yii::t('profile', 'Updated At'),
-            'name' => Yii::t('profile', 'Name'),
-            'age' => Yii::t('profile', 'Age'),
-            'sex' => Yii::t('profile', 'Sex'),
-            'phone' => Yii::t('profile', 'Phone'),
+            'id' => 'ID',
+            'user_id' => 'User ID',
+            'avatar' =>'Аватар',
+            'created_at' => 'Дата создания',
+            'updated_at' => 'Дата обновления',
+            'name' => 'Имя',
+            'age' => 'Возраст',
+            'sex' => 'Пол',
+            'phone' => "Телефон",
         ];
     }
 }

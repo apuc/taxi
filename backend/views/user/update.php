@@ -1,9 +1,13 @@
 <?php
 
+use backend\models\User;
 use yii\helpers\Html;
 
-/* @var $this yii\web\View */
-/* @var $model app\models\User */
+/* @var $this yii\web\View
+ * @var $model User
+ * @var $profile \backend\models\Profile
+ *
+ */
 
 $this->title = 'Обновить ' . $model->username;
 $this->params['breadcrumbs'][] = ['label' => 'Пользователи', 'url' => ['index']];
@@ -14,6 +18,7 @@ $this->params['breadcrumbs'][] = 'Обновить';
 
     <?= $this->render('_form', [
         'model' => $model,
+        "profile" => $profile
     ]) ?>
 
 </div>
