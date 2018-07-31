@@ -99,6 +99,7 @@ class UserController extends Controller
     public function actionDelete($id)
     {
         $this->findModel($id)->delete();
+        Profile::findOne(["user_id" => $id])->delete();
 
         return $this->redirect(['index']);
     }

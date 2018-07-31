@@ -40,7 +40,7 @@
 
 					],
                     [ 'label' => 'Пользователи', 'url' => [ '/users' ],  'icon'  => 'users',],
-                    [ 'label' => 'Запросы', 'url' => [ '/request' ] ],
+                    [ 'label' => 'Запросы', 'url' => [ '/request' ], 'icon'  => 'paper-plane' ],
 					[
 						'label' => "Местоположение",
 						'url'   => [ "#" ],

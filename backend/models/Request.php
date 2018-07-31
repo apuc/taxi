@@ -21,7 +21,7 @@ class Request extends \common\models\Request
     public function rules()
     {
         return [
-            [['user_id', 'car_id', 'city_id'], 'required', "message"=>"Обязательное поле"],
+            [['user_id'], 'required', "message"=>"Обязательное поле"],
         ];
     }
 
@@ -32,13 +32,13 @@ class Request extends \common\models\Request
     {
         return [
             'id' => 'ID',
-            'user_id' => 'User ID',
-            'status' => 'Status',
-            'type' => 'Type',
-            'car_id' => 'Car ID',
-            'content' => 'Content',
-            'dt_add' => 'Dt Add',
-            'city_id' => 'City ID',
+            'user_id' => 'Пользователь',
+            'status' => 'Статус',
+            'type' => 'Тип',
+            'car_id' => 'Машина',
+            'content' => 'Содержимое заявки',
+            'dt_add' => 'Дата добавления',
+            'city_id' => 'Город',
         ];
     }
 }
