@@ -8,7 +8,6 @@ use Yii;
  * This is the model class for table "request".
  *
  * @property int $id
- * @property int $user_id
  * @property int $status
  * @property string $type
  * @property int $car_id
@@ -17,6 +16,9 @@ use Yii;
  * @property int $city_id
  * @property int $parent_id
  * @property int $is_answer
+ * @property int $user_id
+ *
+ * @property User $user
  */
 class Request extends \yii\db\ActiveRecord
 {
@@ -34,10 +36,11 @@ class Request extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['user_id', 'dt_add'], 'required'],
-            [['user_id', 'status', 'car_id', 'dt_add', 'city_id', 'parent_id', 'is_answer'], 'integer'],
+            [['status', 'car_id', 'dt_add', 'city_id', 'parent_id', 'is_answer', 'user_id'], 'integer'],
             [['content'], 'string'],
+            [['dt_add'], 'required'],
             [['type'], 'string', 'max' => 255],
+            [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['user_id' => 'id']],
         ];
     }
 
@@ -56,5 +59,13 @@ class Request extends \yii\db\ActiveRecord
             'dt_add' => Yii::t('request', 'Dt Add'),
             'city_id' => Yii::t('request', 'City ID'),
         ];
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getUser()
+    {
+        return $this->hasOne(User::className(), ['id' => 'user_id']);
     }
 }

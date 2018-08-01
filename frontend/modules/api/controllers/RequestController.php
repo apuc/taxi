@@ -2,6 +2,7 @@
 
 namespace frontend\modules\api\controllers;
 
+use backend\models\User;
 use common\helpers\Constants;
 use common\models\OptionSettings;
 use common\models\Request;
@@ -150,11 +151,19 @@ class RequestController extends DefaultController
     {
         $modelPost = new ApiRequest();
 
+        $allUsers = isset(Yii::$app->request->post()["all_users"]) ? Yii::$app->request->post()["all_users"] : null;
+
         $apiRequest["ApiRequest"] = Yii::$app->request->post();
         $modelPost->load($apiRequest);
-        $modelPost->user_id = $this->user->id;
-        $models = ApiRequest::find()->where(["user_id" => $modelPost->user_id])->limit($modelPost->limit)->offset($modelPost->offset)->asArray()->all();
+        $modelPost->validate(); //для установки предела и лимита
+        $models = ApiRequest::find();
+        if (is_null($allUsers) || $allUsers == Constants::STATUS_DISABLED) {
+            $models = $models->where(["user_id" => $this->user->id]);
+        } else {
+            $models = $models->joinWith("user")->where(["user.status"=>User::STATUS_ACTIVE, "request.status"=>Constants::STATUS_ENABLED]);
+        }
 
+        $models = $models->limit($modelPost->limit)->offset($modelPost->offset)->asArray()->all();
         return $models;
 
     }
