@@ -67,7 +67,10 @@ class MotorTransportController extends DefaultController {
         $model = ApiMotorTransport::findOne($id);
         if ($model !== null) {
             $model->delete();
-            OptionSettings::findOne(["table_row"=>$model->id])->delete();
+            $optionSettings = OptionSettings::findOne(["table_row"=>$model->id]);
+            if ($optionSettings !== null){
+                $optionSettings->delete();
+            }
         }
         return $this->getResult("Транспорт успешно удален!");
     }
