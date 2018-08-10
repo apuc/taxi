@@ -65,7 +65,7 @@ class MotorTransportController extends DefaultController {
     public function actionDelete() {
         $id = Yii::$app->request->post()["id"];
         $model = ApiMotorTransport::findOne($id);
-        if (!is_null($model)) {
+        if ($model !== null) {
             $model->delete();
             OptionSettings::findOne(["table_row"=>$model->id])->delete();
         }
