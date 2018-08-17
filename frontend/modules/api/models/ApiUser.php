@@ -13,6 +13,7 @@ use Yii;
  * @property string $password_hash
  * @property string $password_reset_token
  * @property string $email
+ * @property int $city_id
  * @property int $status
  * @property int $created_at
  * @property int $updated_at
@@ -22,16 +23,7 @@ class ApiUser extends \common\models\User
 	//для пагинации
 	public $offset;
 	public $limit;
-	
     
-    public function rules()
-    {
-	    $rules = parent::rules();
-	    
-	    $rules[] = [ [ "offset", "limit" ], "integer" ];
-	    $rules[] = [ [ "offset", "limit" ], "default", "value" => 2 ];
-	    return $rules;
-    }
 
     /**
      * {@inheritdoc}
