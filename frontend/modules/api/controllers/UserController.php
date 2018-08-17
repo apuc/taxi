@@ -2,6 +2,7 @@
 
 namespace frontend\modules\api\controllers;
 
+use common\helpers\Constants;
 use common\helpers\Folder;
 use common\models\LoginForm;
 use common\models\Profile;
@@ -49,11 +50,6 @@ class UserController extends Controller
         }
     }
 
-    public function actionIndex()
-    {
-        return $this->render('index');
-    }
-
     private function isToken()
     {
         if (isset(Yii::$app->request->post()["token"])) {
@@ -66,57 +62,48 @@ class UserController extends Controller
     {
         $model = new SignupForm();
 
-        if (Yii::$app->request->isPost) {
+        $data["SignupForm"] = Yii::$app->request->post();
+        $model->load($data);
 
-            $data["SignupForm"] = Yii::$app->request->post();
-            $model->load($data);
-
-            $user = $model->signup();
-            header('Access-Control-Allow-Origin: *');
-            //вывод ошибок из модели юзера
-            if (is_array($user)) {
-                return $user;
-            }
-            $this->status = 1;
-            return [
-                "status" => $this->status,
-                "id" => $user->id,
-                "username" => $user->username,
-                "email" => $user->email
-            ];
-
+        $user = $model->signup();
+        header('Access-Control-Allow-Origin: *');
+        //вывод ошибок из модели юзера
+        if (is_array($user)) {
+            return $user;
         }
-        return $this->render('index', compact("model"));
+        $this->status = Constants::STATUS_ENABLED;
+        return [
+            "status" => $this->status,
+            "id" => $user->id,
+            "username" => $user->username,
+            "email" => $user->email
+        ];
     }
 
     public function actionLogin()
     {
         $model = new LoginForm();
 
-        if (Yii::$app->request->isPost) {
-            header('Access-Control-Allow-Origin: *');
-            $data["LoginForm"] = Yii::$app->request->post();
-            $model->load($data);
-            \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-
-            if ($model->login()) {
-                $user = User::getUser($model->username);
-                $token = new Token();
-                $token->user_id = $user->id;
-                $token->token = bin2hex(openssl_random_pseudo_bytes(64));
-                $token->date_add = time();
-                $token->save();
-                $this->status = 1;
-
-                return ['status' => $this->status, 'token' => $token->token, "user_id" => $user->id];
-            } else {
-                $this->error_msg = 'Неверно введены данные!';
-
-                return ['status' => $this->status, 'error_msg' => $this->error_msg];
-            }
-        }
         header('Access-Control-Allow-Origin: *');
-        return $this->render('login', compact("model"));
+        $data["LoginForm"] = Yii::$app->request->post();
+        $model->load($data);
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+
+        if ($model->login()) {
+            $user = User::getUser($model->username);
+            $token = new Token();
+            $token->user_id = $user->id;
+            $token->token = bin2hex(openssl_random_pseudo_bytes(64));
+            $token->date_add = time();
+            $token->save();
+            $this->status = 1;
+
+            return ['status' => $this->status, 'token' => $token->token, "user_id" => $user->id];
+        } else {
+            $this->error_msg = 'Неверно введены данные!';
+
+            return ['status' => $this->status, 'error_msg' => $this->error_msg];
+        }
     }
 
     public function actionGet()
@@ -125,6 +112,7 @@ class UserController extends Controller
         $result['profile'] = Profile::findOne(['user_id' => $this->user->id])->toArray();
 
         $result['profile']['avatar'] = yii\helpers\Url::home(true) . $result['profile']['avatar'];
+        $result['profile']['sex'] = ($result['profile']['sex'] == Profile::MEN) ? "Мужской" : ($result['profile']['sex'] == Profile::WOMEN) ? "Женский" : "Бесполый";
 
         header('Access-Control-Allow-Origin: *');
         return $result;
@@ -179,8 +167,9 @@ class UserController extends Controller
             $apiProfile["ApiProfile"] = Yii::$app->request->post('profile');
             $profile->load($apiProfile);
 
-            $profile->avatar = $this->SaveImg($apiProfile["ApiProfile"]['avatar']);
-
+            if (isset($apiProfile["ApiProfile"]['avatar'])) {
+                $profile->avatar = $this->SaveImg($apiProfile["ApiProfile"]['avatar']);
+            }
 
             if ($profile->save()) {
                 $result['profile'] = 'Данные сохранены';

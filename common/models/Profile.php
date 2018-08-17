@@ -19,6 +19,9 @@ use Yii;
  */
 class Profile extends \yii\db\ActiveRecord
 {
+    const MEN = 1;
+    const WOMEN = 2;
+    
     /**
      * {@inheritdoc}
      */

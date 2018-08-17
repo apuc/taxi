@@ -20,10 +20,21 @@ use Yii;
  */
 class ApiUser extends \common\models\User
 {
-	//для пагинации
-	public $offset;
-	public $limit;
-    
+    //для пагинации
+    public $offset;
+    public $limit;
+
+
+    public function rules()
+    {
+        $rules = parent::rules();
+        $rules[] = [['username'], 'unique', 'message' => 'Такой username уже используется'];
+        $rules[] = [['email'], 'unique', 'message' => 'Такой email уже используется'];
+        $rules[] = [["offset", "limit", "status", "city_id"], "integer", "message" => "Поле должно быть числом"];
+        $rules[] = [["offset"], "default", "value" => 0];
+        $rules[] = [["limit"], "default", "value" => 20];
+        return $rules;
+    }
 
     /**
      * {@inheritdoc}
