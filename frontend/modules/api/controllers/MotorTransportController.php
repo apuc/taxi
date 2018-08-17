@@ -10,14 +10,18 @@ namespace frontend\modules\api\controllers;
 
 use common\helpers\Constants;
 use common\helpers\Folder;
+use common\models\MotorTransport;
 use common\models\OptionSettings;
 use frontend\modules\api\models\ApiMotorTransport;
 use Yii;
+use yii\helpers\Url;
 use yii\widgets\ActiveForm;
 
-class MotorTransportController extends DefaultController {
+class MotorTransportController extends DefaultController
+{
 
-    private function SaveImg($img) {
+    private function SaveImg($img)
+    {
         $dir = '/media/upload/' . $this->user->id . '/' . date('Y-m-d') . '/';
         $path = Yii::getAlias('@frontend/web' . $dir);
         $folderCreate = new Folder($path, 0775);
@@ -39,7 +43,8 @@ class MotorTransportController extends DefaultController {
     }
 
 
-    public function actionAdd() {
+    public function actionAdd()
+    {
         $model = new ApiMotorTransport();
         $apiMotor["ApiMotorTransport"] = Yii::$app->request->post();
 
@@ -62,13 +67,14 @@ class MotorTransportController extends DefaultController {
         return $this->getResult("Транспорт успешно добавлен");
     }
 
-    public function actionDelete() {
+    public function actionDelete()
+    {
         $id = Yii::$app->request->post()["id"];
         $model = ApiMotorTransport::findOne($id);
         if ($model !== null) {
             $model->delete();
-            $optionSettings = OptionSettings::findOne(["table_row"=>$model->id]);
-            if ($optionSettings !== null){
+            $optionSettings = OptionSettings::findOne(["table_row" => $model->id]);
+            if ($optionSettings !== null) {
                 $optionSettings->delete();
             }
         }
@@ -92,12 +98,15 @@ class MotorTransportController extends DefaultController {
         }
 
         $data["model"] = $model->toArray();
+        $data['model']['photo'] = Url::home(true) . $data['model']['photo'];
+        $data['model']['status'] = ($data['model']['status'] == Constants::STATUS_ENABLED) ? "Активен" : "Не активен";
 
         return $data;
     }
 
 
-    public function actionEdit() {
+    public function actionEdit()
+    {
         $id = Yii::$app->request->post()["id"];
         $model = ApiMotorTransport::findOne($id);
 
@@ -107,10 +116,10 @@ class MotorTransportController extends DefaultController {
 
         $apiMotor["ApiMotorTransport"] = Yii::$app->request->post();
 
-        if(isset(Yii::$app->request->post()['photo'])){
+        if (isset(Yii::$app->request->post()['photo'])) {
             //var_dump(Yii::$app->request->post()['photo']);die();
             $path = Yii::getAlias('@frontend/web' . $model->photo);
-            if($model->photo)
+            if ($model->photo)
                 unlink($path);
         }
 
@@ -133,7 +142,8 @@ class MotorTransportController extends DefaultController {
         return $this->getResult("Мототранспорт обновлен");
     }
 
-    public function actionGetLists() {
+    public function actionGetLists()
+    {
         $modelPost = new ApiMotorTransport();
 
         $apiMotor["ApiMotorTransport"] = Yii::$app->request->post();
@@ -147,7 +157,7 @@ class MotorTransportController extends DefaultController {
             $models = ApiMotorTransport::find()->limit($modelPost->limit)->offset($modelPost->offset)
                 ->asArray()->all();
         } else {
-            $models = ApiMotorTransport::find()->where(['user_id'=> (int)$modelPost->user_id])
+            $models = ApiMotorTransport::find()->where(['user_id' => (int)$modelPost->user_id])
                 ->limit($modelPost->limit)->offset($modelPost->offset)
                 ->asArray()->all();
         }
@@ -155,7 +165,8 @@ class MotorTransportController extends DefaultController {
         return $models;
     }
 
-    public function actionOption(){
+    public function actionOption()
+    {
         return $this->getOptionSettingsValue("motor_transport");
     }
 

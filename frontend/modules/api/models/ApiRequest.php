@@ -31,7 +31,8 @@ class ApiRequest extends Request {
 
 		$rules[] = [ [ "offset", "limit" ], "integer" ];
 		$rules[] = [ [ "is_answer"], "default", "value"=> Constants::STATUS_ENABLED ];
-		$rules[] = [ [ "offset", "limit" ], "default", "value" => 2 ];
+		$rules[] = [ [ "offset"], "default", "value" => 0 ];
+		$rules[] = [ [ "limit"], "default", "value" => 20 ];
 		return $rules;
 	}
 }
