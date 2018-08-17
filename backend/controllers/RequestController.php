@@ -2,6 +2,7 @@
 
 namespace backend\controllers;
 
+use common\models\OptionsSettingsValue;
 use Yii;
 use backend\models\Request;
 use backend\models\RequestSearch;
@@ -90,8 +91,11 @@ class RequestController extends Controller
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
+        $optionsSettingsValue = OptionsSettingsValue::find()->where(['table_name' => $model->tableName()])->all();
+
         return $this->render('update', [
             'model' => $model,
+            'optionsSettingsValue' => $optionsSettingsValue
         ]);
     }
 

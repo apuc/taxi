@@ -90,11 +90,13 @@ $this->params['breadcrumbs'][] = $this->title;
                         "table_name" => $model->tableName(),
                         "table_row" => $model->id
                     ]);
-                    $value = json_decode($settings->value, true);
                     $result = "";
-                    foreach ($value as $key => $item) {
-                        $valueSettings = OptionsSettingsValue::findOne(["key" => $key]);
-                        $result .= $valueSettings->label . " " . $valueSettings->value . "<br>";
+                    if ($settings) {
+                        $value = json_decode($settings->value, true);
+                        foreach ($value as $key => $item) {
+                            $valueSettings = OptionsSettingsValue::findOne(["key" => $key]);
+                            $result .= $valueSettings->label . " " . $valueSettings->value . "<br>";
+                        }
                     }
                     return $result;
                 }
